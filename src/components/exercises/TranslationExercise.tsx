@@ -1,0 +1,48 @@
+import { useState } from 'react'
+import clsx from 'clsx'
+import type { ExerciseComponentProps } from './types'
+import { Button } from '../ui/Button'
+import { answerMatches } from '../../lib/text'
+
+export function TranslationExercise({ exercise, onAnswer }: ExerciseComponentProps) {
+  const [value, setValue] = useState('')
+  const [checked, setChecked] = useState(false)
+  const [correct, setCorrect] = useState(false)
+
+  function check() {
+    if (!value.trim()) return
+    const isCorrect = answerMatches(value, exercise.acceptableAnswers ?? [exercise.correctText ?? ''])
+    setChecked(true)
+    setCorrect(isCorrect)
+    onAnswer(isCorrect)
+  }
+
+  return (
+    <div>
+      <p className="mb-5 text-xl font-bold text-slate-800">{exercise.prompt}</p>
+      <textarea
+        value={value}
+        disabled={checked}
+        onChange={(e) => setValue(e.target.value)}
+        rows={2}
+        placeholder="Escreva sua tradução"
+        className={clsx(
+          'w-full resize-none rounded-2xl border-2 px-4 py-3 text-lg font-semibold outline-none transition-colors',
+          !checked && 'border-slate-200 focus:border-brand-400',
+          checked && correct && 'border-progress-500 bg-progress-50 text-progress-700',
+          checked && !correct && 'border-heart-500 bg-heart-500/10 text-heart-600',
+        )}
+      />
+      {!checked && (
+        <Button className="mt-4" onClick={check} disabled={!value.trim()}>
+          Verificar
+        </Button>
+      )}
+      {checked && !correct && (
+        <p className="mt-3 font-semibold text-slate-600">
+          Resposta esperada: <span className="text-progress-700">{exercise.correctText}</span>
+        </p>
+      )}
+    </div>
+  )
+}

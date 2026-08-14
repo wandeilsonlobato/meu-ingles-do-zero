@@ -1,0 +1,101 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Nunito', system-ui, 'Segoe UI', Roboto, sans-serif;
+
+  /* Azul confiável — marca, ações principais */
+  --color-brand-50: #eef6ff;
+  --color-brand-100: #d9ebff;
+  --color-brand-200: #b7d9ff;
+  --color-brand-300: #85c0ff;
+  --color-brand-400: #4d9fff;
+  --color-brand-500: #2379f5;
+  --color-brand-600: #155ad1;
+  --color-brand-700: #1247a8;
+  --color-brand-800: #133d85;
+  --color-brand-900: #14356b;
+
+  /* Verde de progresso — XP, acertos, conclusão */
+  --color-progress-50: #eefdf3;
+  --color-progress-100: #d6fae2;
+  --color-progress-200: #aef2c9;
+  --color-progress-300: #75e5a8;
+  --color-progress-400: #3fd082;
+  --color-progress-500: #1ab566;
+  --color-progress-600: #0f9553;
+  --color-progress-700: #0d7745;
+  --color-progress-800: #0e5e39;
+  --color-progress-900: #0c4d30;
+
+  /* Amarelo/laranja — conquistas, streak, destaque */
+  --color-glow-50: #fffaeb;
+  --color-glow-100: #fef0c7;
+  --color-glow-200: #fde08a;
+  --color-glow-300: #fcc94d;
+  --color-glow-400: #fbb324;
+  --color-glow-500: #f5940b;
+  --color-glow-600: #d97406;
+  --color-glow-700: #b45509;
+  --color-glow-800: #92420e;
+  --color-glow-900: #78370f;
+
+  /* Vermelho — vidas/erros, uso comedido */
+  --color-heart-500: #f0473f;
+  --color-heart-600: #d32f2f;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-pop {
+  animation: pop 0.25s ease-in-out;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
