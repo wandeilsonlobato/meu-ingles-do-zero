@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Download, Smartphone } from 'lucide-react'
 import clsx from 'clsx'
 import { useAppStore } from '../store/useAppStore'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { DAILY_GOAL_LABELS } from '../lib/gamification'
+import { useInstallPrompt } from '../lib/useInstallPrompt'
 import type { DailyGoal } from '../types'
 
 const GOALS: DailyGoal[] = ['casual', 'regular', 'serio', 'intenso']
@@ -15,12 +17,37 @@ export default function Settings() {
   const updateDailyGoal = useAppStore((s) => s.updateDailyGoal)
   const logOut = useAppStore((s) => s.logOut)
   const [notifications, setNotifications] = useState(true)
+  const { canInstall, installed, isIos, promptInstall } = useInstallPrompt()
 
   if (!user) return null
 
   return (
     <div className="mx-auto max-w-xl">
       <h1 className="mb-6 text-2xl font-extrabold text-slate-800">Configurações</h1>
+
+      {!installed && (canInstall || isIos) && (
+        <Card className="mb-5 flex items-center gap-4 border-brand-200 bg-brand-50 p-6">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-500 text-white">
+            <Smartphone size={22} />
+          </div>
+          <div className="flex-1">
+            <h2 className="font-bold text-slate-800">Instale o app no seu celular</h2>
+            {canInstall ? (
+              <p className="text-sm text-slate-500">Acesso rápido com ícone na tela inicial, abrindo em tela cheia, sem a barra do navegador.</p>
+            ) : (
+              <p className="text-sm text-slate-500">
+                No Safari, toque em <strong>Compartilhar</strong> e depois em{' '}
+                <strong>Adicionar à Tela de Início</strong>.
+              </p>
+            )}
+          </div>
+          {canInstall && (
+            <Button size="sm" icon={<Download size={16} />} onClick={promptInstall}>
+              Instalar
+            </Button>
+          )}
+        </Card>
+      )}
 
       <Card className="mb-5 p-6">
         <h2 className="mb-3 font-bold text-slate-700">Meta diária</h2>
@@ -52,7 +79,7 @@ export default function Settings() {
           />
         </label>
         <p className="mt-2 text-xs text-slate-400">
-          Notificações push/e-mail dependem de um backend conectado (ex: Supabase + serviço de push).
+          O envio de notificações de verdade (push ou e-mail) ainda não está implementado nesta versão.
         </p>
       </Card>
 
