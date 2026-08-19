@@ -1,5 +1,5 @@
 import { supabase } from './supabaseClient'
-import type { CustomLessonDraft, DailyGoal, Exercise, LeagueTier, LessonStatus, ReviewItem, User, UserProgressEntry } from '../types'
+import type { CustomLessonDraft, DailyGoal, Exercise, LeaderboardRow, LeagueTier, LessonStatus, ReviewItem, User, UserProgressEntry } from '../types'
 
 /**
  * Ponte entre o formato `User` usado pela UI/store (camelCase, já no shape
@@ -280,6 +280,34 @@ export async function fetchAdminOverview(): Promise<AdminStudentRow[]> {
     league: p.league,
     createdAt: p.created_at,
     completedLessons: completedByUser.get(p.id) ?? 0,
+  }))
+}
+
+interface LeaderboardViewRow {
+  id: string
+  name: string
+  avatar_emoji: string
+  league: LeagueTier
+  xp_this_week: number
+  week_start_date: string
+}
+
+/**
+ * Ranking real: lê a view pública `leaderboard` (só name/avatar/liga/XP da
+ * semana — nunca e-mail). Requer a migration 0003_leaderboard.sql aplicada;
+ * sem ela, retorna vazio e a tela mostra só o usuário atual.
+ */
+export async function fetchLeaderboard(): Promise<LeaderboardRow[]> {
+  if (!supabase) return []
+  const { data, error } = await supabase.from('leaderboard').select('*')
+  if (error || !data) return []
+  return (data as LeaderboardViewRow[]).map((r) => ({
+    id: r.id,
+    name: r.name,
+    avatarEmoji: r.avatar_emoji,
+    league: r.league,
+    xpThisWeek: r.xp_this_week,
+    weekStartDate: r.week_start_date,
   }))
 }
 

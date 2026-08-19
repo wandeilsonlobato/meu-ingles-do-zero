@@ -70,10 +70,17 @@ export function findExerciseById(levels: Level[], exerciseId: string): { exercis
   return null
 }
 
+export interface AchievementContext {
+  wordsLearned?: number
+  perfectSpeakingExercise?: boolean
+  levelJustCompletedCode?: string
+  justPurchasedItem?: boolean
+}
+
 export function checkNewAchievements(
   user: User,
   achievements: Achievement[],
-  context: { wordsLearned: number; perfectSpeakingExercise: boolean; levelJustCompletedCode?: string },
+  context: AchievementContext = {},
 ): Achievement[] {
   const already = new Set(user.achievements.map((a) => a.achievementId))
   const unlocked: Achievement[] = []
@@ -85,12 +92,31 @@ export function checkNewAchievements(
     }
   }
 
+  const progressEntries = Object.values(user.progress)
+  const completedCount = progressEntries.filter((p) => p.status === 'completed').length
+  const hasPerfectLesson = progressEntries.some((p) => p.bestAccuracy === 100)
+
+  maybeUnlock('first-lesson', completedCount >= 1)
+  maybeUnlock('streak-3', user.streakCurrent >= 3)
   maybeUnlock('streak-7', user.streakCurrent >= 7)
   maybeUnlock('streak-30', user.streakCurrent >= 30)
-  maybeUnlock('words-100', context.wordsLearned >= 100)
-  maybeUnlock('perfect-pronunciation', context.perfectSpeakingExercise)
+  maybeUnlock('streak-100', user.streakCurrent >= 100)
+  maybeUnlock('words-100', (context.wordsLearned ?? completedCount * 4) >= 100)
+  maybeUnlock('perfect-pronunciation', context.perfectSpeakingExercise === true)
+  maybeUnlock('perfect-lesson', hasPerfectLesson)
+  maybeUnlock('lessons-10', completedCount >= 10)
+  maybeUnlock('lessons-50', completedCount >= 50)
+  maybeUnlock('lessons-100', completedCount >= 100)
+  maybeUnlock('level-a0-complete', context.levelJustCompletedCode === 'A0')
   maybeUnlock('level-a1-complete', context.levelJustCompletedCode === 'A1')
-  maybeUnlock('first-lesson', Object.values(user.progress).some((p) => p.status === 'completed'))
+  maybeUnlock('level-a2-complete', context.levelJustCompletedCode === 'A2')
+  maybeUnlock('xp-500', user.xpTotal >= 500)
+  maybeUnlock('xp-2000', user.xpTotal >= 2000)
+  maybeUnlock('xp-5000', user.xpTotal >= 5000)
+  maybeUnlock('shop-first-purchase', context.justPurchasedItem === true)
+  maybeUnlock('shop-collector', user.ownedCosmetics.length >= 3)
+  maybeUnlock('league-gold', user.league === 'Ouro' || user.league === 'Diamante')
+  maybeUnlock('league-diamond', user.league === 'Diamante')
 
   return unlocked
 }

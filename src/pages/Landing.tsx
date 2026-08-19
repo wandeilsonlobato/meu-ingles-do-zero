@@ -35,43 +35,49 @@ const TESTIMONIALS = [
 export default function Landing() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-brand-50 to-white">
-      <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-        <div className="flex items-center gap-2 font-extrabold text-brand-700 text-lg">
-          <BookOpen size={24} />
-          Meu Inglês do Zero
-        </div>
-        <div className="flex items-center gap-3">
-          <Link to="/entrar" className="font-semibold text-brand-700 hover:underline">
-            Entrar
-          </Link>
-          <Link to="/cadastro">
-            <Button size="sm">Começar grátis</Button>
-          </Link>
-        </div>
-      </header>
+      <div className="relative overflow-hidden">
+        <div className="pointer-events-none absolute -left-24 -top-24 -z-10 h-72 w-72 rounded-full bg-glow-200/50 blur-3xl" />
+        <div className="pointer-events-none absolute -right-16 top-10 -z-10 h-80 w-80 rounded-full bg-progress-200/40 blur-3xl" />
+        <div className="pointer-events-none absolute left-1/3 top-64 -z-10 h-64 w-64 rounded-full bg-brand-200/40 blur-3xl" />
 
-      <section className="mx-auto flex max-w-6xl flex-col items-center px-6 py-16 text-center">
-        <span className="mb-4 rounded-full bg-brand-100 px-4 py-1 text-sm font-bold text-brand-700">
-          Para quem nunca estudou inglês (ou acha que "não tem jeito")
-        </span>
-        <h1 className="mb-5 max-w-3xl text-4xl font-extrabold leading-tight text-slate-900 sm:text-5xl">
-          Aprenda inglês do absoluto zero, <span className="text-brand-600">em português</span>, no seu ritmo.
-        </h1>
-        <p className="mb-8 max-w-2xl text-lg text-slate-600">
-          Trilha estruturada por níveis, explicações claras de gramática, prática de pronúncia com reconhecimento
-          de voz e gamificação para você manter o hábito todos os dias.
-        </p>
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <Link to="/cadastro">
-            <Button size="lg">Criar minha conta grátis</Button>
-          </Link>
-          <Link to="/entrar">
-            <Button size="lg" variant="secondary">
-              Já tenho conta
-            </Button>
-          </Link>
-        </div>
-      </section>
+        <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+          <div className="flex items-center gap-2 font-display font-extrabold text-brand-700 text-lg">
+            <BookOpen size={24} />
+            Meu Inglês do Zero
+          </div>
+          <div className="flex items-center gap-3">
+            <Link to="/entrar" className="font-semibold text-brand-700 hover:underline">
+              Entrar
+            </Link>
+            <Link to="/cadastro">
+              <Button size="sm">Começar grátis</Button>
+            </Link>
+          </div>
+        </header>
+
+        <section className="mx-auto flex max-w-6xl flex-col items-center px-6 py-16 text-center">
+          <span className="mb-4 rounded-full bg-brand-100 px-4 py-1 text-sm font-bold text-brand-700">
+            Para quem nunca estudou inglês (ou acha que "não tem jeito")
+          </span>
+          <h1 className="mb-5 max-w-3xl text-4xl font-extrabold leading-tight text-slate-900 sm:text-5xl">
+            Aprenda inglês do absoluto zero, <span className="text-brand-600">em português</span>, no seu ritmo.
+          </h1>
+          <p className="mb-8 max-w-2xl text-lg text-slate-600">
+            Trilha estruturada por níveis, explicações claras de gramática, prática de pronúncia com reconhecimento
+            de voz e gamificação para você manter o hábito todos os dias.
+          </p>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Link to="/cadastro">
+              <Button size="lg">Criar minha conta grátis</Button>
+            </Link>
+            <Link to="/entrar">
+              <Button size="lg" variant="secondary">
+                Já tenho conta
+              </Button>
+            </Link>
+          </div>
+        </section>
+      </div>
 
       <section className="mx-auto max-w-6xl px-6 py-10">
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">

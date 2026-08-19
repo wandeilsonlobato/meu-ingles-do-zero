@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import clsx from 'clsx'
 import { useAppStore } from '../store/useAppStore'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
@@ -14,9 +13,16 @@ export default function Store() {
 
   function handleBuy(itemId: string) {
     const result = purchaseItem(itemId)
-    setMessage(result.ok ? 'Item resgatado com sucesso!' : result.error ?? 'Não foi possível comprar.')
-    setTimeout(() => setMessage(null), 2500)
+    if (result.ok && result.newAchievements && result.newAchievements.length > 0) {
+      setMessage(`Item resgatado! Conquista desbloqueada: ${result.newAchievements[0].icon} ${result.newAchievements[0].name}`)
+    } else {
+      setMessage(result.ok ? 'Item resgatado com sucesso!' : result.error ?? 'Não foi possível comprar.')
+    }
+    setTimeout(() => setMessage(null), 3000)
   }
+
+  const functionalItems = SHOP_ITEMS.filter((i) => i.kind !== 'avatar')
+  const avatarItems = SHOP_ITEMS.filter((i) => i.kind === 'avatar')
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -31,9 +37,29 @@ export default function Store() {
         </div>
       )}
 
+      <h2 className="mb-3 font-bold text-slate-700">Itens</h2>
+      <div className="mb-8 grid gap-4 sm:grid-cols-2">
+        {functionalItems.map((item) => {
+          const canAfford = user.coins >= item.cost
+          return (
+            <Card key={item.id} className="flex items-center gap-4 p-5">
+              <span className="text-4xl">{item.emoji}</span>
+              <div className="flex-1">
+                <p className="font-bold text-slate-800">{item.name}</p>
+                <p className="text-sm text-slate-500">{item.description}</p>
+              </div>
+              <Button size="sm" disabled={!canAfford} onClick={() => handleBuy(item.id)}>
+                {item.cost} 🪙
+              </Button>
+            </Card>
+          )
+        })}
+      </div>
+
+      <h2 className="mb-3 font-bold text-slate-700">Avatares</h2>
       <div className="grid gap-4 sm:grid-cols-2">
-        {SHOP_ITEMS.map((item) => {
-          const owned = item.kind === 'avatar' && user.ownedCosmetics.includes(item.id)
+        {avatarItems.map((item) => {
+          const owned = user.ownedCosmetics.includes(item.id)
           const canAfford = user.coins >= item.cost
           return (
             <Card key={item.id} className="flex items-center gap-4 p-5">
@@ -55,7 +81,7 @@ export default function Store() {
         })}
       </div>
 
-      <p className={clsx('mt-6 text-center text-xs text-slate-400')}>
+      <p className="mt-6 text-center text-xs text-slate-400">
         Ganhe moedas completando lições: você recebe metade do XP da lição também em moedas.
       </p>
     </div>

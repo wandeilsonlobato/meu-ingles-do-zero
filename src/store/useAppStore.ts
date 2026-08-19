@@ -38,12 +38,25 @@ interface AuthResult {
   needsEmailConfirmation?: boolean
 }
 
+interface UnlockedAchievement {
+  id: string
+  name: string
+  icon: string
+  description: string
+}
+
 interface LessonAttemptResult {
   correctCount: number
   totalCount: number
   xpEarned: number
-  newAchievements: { id: string; name: string; icon: string; description: string }[]
+  newAchievements: UnlockedAchievement[]
   leveledUp: boolean
+}
+
+interface PurchaseResult {
+  ok: boolean
+  error?: string
+  newAchievements?: UnlockedAchievement[]
 }
 
 interface AppState {
@@ -65,7 +78,7 @@ interface AppState {
   loseHeartAction: () => void
   submitLessonAttempt: (lessonId: string, correctCount: number, totalCount: number, xpReward: number) => LessonAttemptResult
   useStreakFreezeItem: () => void
-  purchaseItem: (itemId: string) => { ok: boolean; error?: string }
+  purchaseItem: (itemId: string) => PurchaseResult
   updateDailyGoal: (goal: DailyGoal) => void
   updateAvatar: (emoji: string) => void
 
@@ -273,9 +286,18 @@ export const useAppStore = create<AppState>()((set, get) => ({
     const level = containingUnit ? COURSE.find((l) => l.id === containingUnit.levelId) : undefined
     const justCompletedLevel = level && level.units.every((u) => u.lessons.every((les) => newProgress[les.id]?.status === 'completed'))
 
+    const newCoins = user.coins + Math.round(xpEarned / 2)
+    const newLeague = leagueForXp(weekly.xpThisWeek)
+
     const wordsLearned = Object.values(newProgress).filter((p) => p.status === 'completed').length * 4
     const unlocked = checkNewAchievements(
-      { ...user, progress: newProgress, streakCurrent: streakState.streakCurrent },
+      {
+        ...user,
+        progress: newProgress,
+        streakCurrent: streakState.streakCurrent,
+        xpTotal: newXpTotal,
+        league: newLeague,
+      },
       ACHIEVEMENTS,
       {
         wordsLearned,
@@ -283,9 +305,6 @@ export const useAppStore = create<AppState>()((set, get) => ({
         levelJustCompletedCode: justCompletedLevel ? level?.code : undefined,
       },
     )
-
-    const newCoins = user.coins + Math.round(xpEarned / 2)
-    const newLeague = leagueForXp(weekly.xpThisWeek)
 
     const updatedUser: User = {
       ...user,
@@ -359,6 +378,15 @@ export const useAppStore = create<AppState>()((set, get) => ({
       updated = { ...updated, ownedCosmetics: [...updated.ownedCosmetics, itemId] }
     }
 
+    const unlocked = checkNewAchievements(updated, ACHIEVEMENTS, { justPurchasedItem: true })
+    if (unlocked.length > 0) {
+      updated = {
+        ...updated,
+        achievements: [...updated.achievements, ...unlocked.map((a) => ({ achievementId: a.id, earnedAt: new Date().toISOString() }))],
+      }
+      void persistNewAchievements(user.id, unlocked.map((a) => a.id))
+    }
+
     set({ users: { ...state.users, [user.id]: updated } })
     void persistProfilePatch(user.id, {
       coins: updated.coins,
@@ -367,7 +395,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
       livesLastRefillAt: updated.livesLastRefillAt,
       ownedCosmetics: updated.ownedCosmetics,
     })
-    return { ok: true }
+    return { ok: true, newAchievements: unlocked }
   },
 
   updateDailyGoal: (goal) => {

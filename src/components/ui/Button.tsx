@@ -39,7 +39,7 @@ export function Button({
   return (
     <button
       className={twMerge(
-        'font-bold tracking-wide transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:active:translate-y-0 select-none inline-flex items-center justify-center gap-2',
+        'font-display font-bold tracking-wide transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:active:translate-y-0 select-none inline-flex items-center justify-center gap-2',
         VARIANT_CLASSES[variant],
         SIZE_CLASSES[size],
         fullWidth && 'w-full',

@@ -1,8 +1,11 @@
+import { useEffect, useState } from 'react'
 import clsx from 'clsx'
-import { ArrowDown, ArrowUp, Minus } from 'lucide-react'
+import { ArrowDown, ArrowUp, Minus, Users } from 'lucide-react'
 import { useAppStore } from '../store/useAppStore'
 import { Card } from '../components/ui/Card'
 import { buildWeeklyRanking, LEAGUE_ORDER, promotionZone } from '../lib/ranking'
+import { fetchLeaderboard } from '../lib/supabaseSync'
+import type { LeaderboardRow } from '../types'
 
 const LEAGUE_COLORS: Record<string, string> = {
   Bronze: 'text-orange-700 bg-orange-100',
@@ -11,12 +14,22 @@ const LEAGUE_COLORS: Record<string, string> = {
   Diamante: 'text-brand-700 bg-brand-100',
 }
 
+const MIN_PLAYERS_FOR_PROMOTION = 5
+
 export default function Ranking() {
   const user = useAppStore((s) => s.currentUser())
+  const [rows, setRows] = useState<LeaderboardRow[] | null>(null)
+
+  useEffect(() => {
+    fetchLeaderboard().then(setRows)
+  }, [])
+
   if (!user) return null
 
-  const ranking = buildWeeklyRanking(user)
+  const loading = rows === null
+  const ranking = buildWeeklyRanking(user, rows ?? [])
   const leagueIdx = LEAGUE_ORDER.indexOf(user.league)
+  const showZones = ranking.length >= MIN_PLAYERS_FOR_PROMOTION
 
   return (
     <div className="mx-auto max-w-xl">
@@ -26,7 +39,9 @@ export default function Ranking() {
         </span>
         <h1 className="mt-2 text-2xl font-extrabold text-slate-800">Ranking semanal</h1>
         <p className="text-sm text-slate-500">
-          Os {Math.ceil(ranking.length * 0.25)} primeiros sobem de liga, os {Math.ceil(ranking.length * 0.25)} últimos descem.
+          {showZones
+            ? `Os ${Math.ceil(ranking.length * 0.25)} primeiros sobem de liga, os ${Math.ceil(ranking.length * 0.25)} últimos descem.`
+            : 'Só entre alunos de verdade — quanto mais gente estudar, mais movimentada fica a liga.'}
         </p>
       </div>
 
@@ -44,30 +59,38 @@ export default function Ranking() {
         ))}
       </div>
 
-      <Card className="divide-y divide-slate-100 overflow-hidden">
-        {ranking.map((entry, i) => {
-          const zone = promotionZone(i, ranking.length)
-          return (
-            <div
-              key={entry.userId}
-              className={clsx(
-                'flex items-center gap-3 px-5 py-3',
-                entry.isCurrentUser && 'bg-brand-50',
-              )}
-            >
-              <span className="w-6 text-center font-bold text-slate-400">{i + 1}</span>
-              <span className="text-2xl">{entry.avatarEmoji}</span>
-              <span className={clsx('flex-1 font-semibold', entry.isCurrentUser ? 'text-brand-700' : 'text-slate-700')}>
-                {entry.name} {entry.isCurrentUser && '(você)'}
-              </span>
-              <span className="font-bold text-slate-600">{entry.xpThisWeek} XP</span>
-              {zone === 'promotion' && <ArrowUp size={18} className="text-progress-500" />}
-              {zone === 'demotion' && <ArrowDown size={18} className="text-heart-500" />}
-              {zone === 'safe' && <Minus size={18} className="text-slate-300" />}
-            </div>
-          )
-        })}
-      </Card>
+      {loading && <Card className="p-8 text-center text-slate-400">Carregando ranking...</Card>}
+
+      {!loading && (
+        <Card className="divide-y divide-slate-100 overflow-hidden">
+          {ranking.map((entry, i) => {
+            const zone = showZones ? promotionZone(i, ranking.length) : 'safe'
+            return (
+              <div
+                key={entry.userId}
+                className={clsx('flex items-center gap-3 px-5 py-3', entry.isCurrentUser && 'bg-brand-50')}
+              >
+                <span className="w-6 text-center font-bold text-slate-400">{i + 1}</span>
+                <span className="text-2xl">{entry.avatarEmoji}</span>
+                <span className={clsx('flex-1 font-semibold', entry.isCurrentUser ? 'text-brand-700' : 'text-slate-700')}>
+                  {entry.name} {entry.isCurrentUser && '(você)'}
+                </span>
+                <span className="font-bold text-slate-600">{entry.xpThisWeek} XP</span>
+                {showZones && zone === 'promotion' && <ArrowUp size={18} className="text-progress-500" />}
+                {showZones && zone === 'demotion' && <ArrowDown size={18} className="text-heart-500" />}
+                {showZones && zone === 'safe' && <Minus size={18} className="text-slate-300" />}
+              </div>
+            )
+          })}
+        </Card>
+      )}
+
+      {!loading && ranking.length < MIN_PLAYERS_FOR_PROMOTION && (
+        <div className="mt-4 flex items-center justify-center gap-2 text-center text-xs text-slate-400">
+          <Users size={14} />
+          Promoção e rebaixamento começam a valer a partir de {MIN_PLAYERS_FOR_PROMOTION} alunos na liga. Convide amigos!
+        </div>
+      )}
     </div>
   )
 }

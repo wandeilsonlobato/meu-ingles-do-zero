@@ -160,3 +160,13 @@ export interface RankingEntry {
   xpThisWeek: number
   isCurrentUser?: boolean
 }
+
+/** Linha crua vinda da view pública `leaderboard` — só dados seguros para expor a outros alunos. */
+export interface LeaderboardRow {
+  id: string
+  name: string
+  avatarEmoji: string
+  league: LeagueTier
+  xpThisWeek: number
+  weekStartDate: string
+}

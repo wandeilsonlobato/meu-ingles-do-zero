@@ -1,53 +1,27 @@
-import type { LeagueTier, RankingEntry, User } from '../types'
+import type { LeaderboardRow, LeagueTier, RankingEntry, User } from '../types'
 
-const BOT_NAMES = [
-  'Marina', 'Thiago', 'Camila', 'Bruno', 'Larissa', 'Felipe', 'Juliana', 'Diego',
-  'Amanda', 'Rafael', 'Beatriz', 'Gustavo', 'Patrícia', 'Rodrigo', 'Fernanda',
-  'Vinícius', 'Aline', 'Leonardo', 'Débora', 'Marcelo',
-]
-const BOT_EMOJIS = ['🦊', '🐨', '🦉', '🐼', '🐯', '🐸', '🐵', '🦁', '🐺', '🐢']
+export const LEAGUE_ORDER: LeagueTier[] = ['Bronze', 'Prata', 'Ouro', 'Diamante']
 
-const LEAGUE_XP_RANGE: Record<LeagueTier, [number, number]> = {
-  Bronze: [0, 60],
-  Prata: [50, 170],
-  Ouro: [140, 320],
-  Diamante: [280, 550],
-}
-
-function seededRandom(seed: number): () => number {
-  let value = seed
-  return () => {
-    value = (value * 9301 + 49297) % 233280
-    return value / 233280
-  }
-}
-
-function hashString(s: string): number {
-  let h = 0
-  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0
-  return h
-}
-
-/** Ranking semanal simulado: 19 competidores + o usuário atual, estável por semana/liga. */
-export function buildWeeklyRanking(user: User): RankingEntry[] {
-  const seed = hashString(`${user.weekStartDate}-${user.league}`)
-  const rand = seededRandom(seed)
-  const [min, max] = LEAGUE_XP_RANGE[user.league]
-
-  const bots: RankingEntry[] = BOT_NAMES.map((name, i) => ({
-    userId: `bot-${i}`,
-    name,
-    avatarEmoji: BOT_EMOJIS[i % BOT_EMOJIS.length],
-    xpThisWeek: Math.round(min + rand() * (max - min)),
-  }))
+/**
+ * Ranking semanal real: só alunos de verdade, na mesma liga do usuário atual,
+ * ordenados por XP da semana. Garante que o próprio usuário apareça mesmo se
+ * a leitura do backend ainda não tiver alcançado o valor mais recente.
+ */
+export function buildWeeklyRanking(currentUser: User, rows: LeaderboardRow[]): RankingEntry[] {
+  const sameLeague = rows.filter((r) => r.league === currentUser.league && r.id !== currentUser.id)
 
   const entries: RankingEntry[] = [
-    ...bots,
+    ...sameLeague.map((r) => ({
+      userId: r.id,
+      name: r.name,
+      avatarEmoji: r.avatarEmoji,
+      xpThisWeek: r.xpThisWeek,
+    })),
     {
-      userId: user.id,
-      name: user.name,
-      avatarEmoji: user.avatarEmoji,
-      xpThisWeek: user.xpThisWeek,
+      userId: currentUser.id,
+      name: currentUser.name,
+      avatarEmoji: currentUser.avatarEmoji,
+      xpThisWeek: currentUser.xpThisWeek,
       isCurrentUser: true,
     },
   ]
@@ -55,9 +29,8 @@ export function buildWeeklyRanking(user: User): RankingEntry[] {
   return entries.sort((a, b) => b.xpThisWeek - a.xpThisWeek)
 }
 
-export const LEAGUE_ORDER: LeagueTier[] = ['Bronze', 'Prata', 'Ouro', 'Diamante']
-
 export function promotionZone(rankIndex: number, totalEntries: number): 'promotion' | 'safe' | 'demotion' {
+  if (totalEntries <= 1) return 'safe'
   if (rankIndex < Math.ceil(totalEntries * 0.25)) return 'promotion'
   if (rankIndex >= totalEntries - Math.ceil(totalEntries * 0.25)) return 'demotion'
   return 'safe'
