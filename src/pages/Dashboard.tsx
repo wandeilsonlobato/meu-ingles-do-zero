@@ -6,7 +6,7 @@ import { useAppStore } from '../store/useAppStore'
 import { COURSE } from '../data/course'
 import { flattenLessons, isLevelUnlocked, lessonStatus, levelCompletionPct } from '../lib/progress'
 import { getNextLessonForUser } from '../store/useAppStore'
-import { LessonNode } from '../components/dashboard/LessonNode'
+import { LessonTrail } from '../components/dashboard/LessonTrail'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { ProgressBar } from '../components/ui/ProgressBar'
@@ -104,29 +104,19 @@ export default function Dashboard() {
 
             {unlocked &&
               hasContent &&
-              level.units.map((unit) => (
-                <div key={unit.id} className="mb-8">
-                  <h3 className="mb-4 text-center text-sm font-bold text-slate-500 dark:text-slate-400">{unit.title}</h3>
-                  <div className="relative flex flex-col items-center gap-6 py-2">
-                    <div
-                      className="pointer-events-none absolute top-2 bottom-2 left-1/2 z-0 w-0.5 -translate-x-1/2 border-l-4 border-dashed border-white/70"
-                      aria-hidden
-                    />
-                    {unit.lessons.map((lesson) => {
-                      const idx = orderedLessons.findIndex((l) => l.id === lesson.id)
-                      const status = lessonStatus(lesson, idx, orderedLessons, user.progress)
-                      return (
-                        <LessonNode
-                          key={lesson.id}
-                          lesson={lesson}
-                          status={status}
-                          index={lesson.order}
-                        />
-                      )
-                    })}
+              level.units.map((unit) => {
+                const trailItems = unit.lessons.map((lesson) => {
+                  const idx = orderedLessons.findIndex((l) => l.id === lesson.id)
+                  const status = lessonStatus(lesson, idx, orderedLessons, user.progress)
+                  return { lesson, status, isNext: lesson.id === nextLesson?.id }
+                })
+                return (
+                  <div key={unit.id} className="mb-8">
+                    <h3 className="mb-4 text-center text-sm font-bold text-slate-500 dark:text-slate-400">{unit.title}</h3>
+                    <LessonTrail items={trailItems} />
                   </div>
-                </div>
-              ))}
+                )
+              })}
           </section>
         )
       })}

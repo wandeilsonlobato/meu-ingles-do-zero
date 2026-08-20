@@ -2,8 +2,7 @@ import { Award, Check, Lock, Star, Trophy } from 'lucide-react'
 import clsx from 'clsx'
 import { useNavigate } from 'react-router-dom'
 import type { Lesson, LessonStatus } from '../../types'
-
-const SIDE_OFFSET = ['ml-0', 'ml-7', 'ml-10', 'ml-7'] as const
+import { useT } from '../../lib/i18n'
 
 function nodeIcon(lesson: Lesson, status: LessonStatus) {
   if (status === 'completed') return <Check size={22} />
@@ -15,18 +14,24 @@ function nodeIcon(lesson: Lesson, status: LessonStatus) {
 export function LessonNode({
   lesson,
   status,
-  index,
+  isNext,
 }: {
   lesson: Lesson
   status: LessonStatus
-  index: number
+  isNext?: boolean
 }) {
   const navigate = useNavigate()
-  const offset = SIDE_OFFSET[index % SIDE_OFFSET.length]
+  const t = useT()
   const locked = status === 'locked'
 
   return (
-    <div className={clsx('relative z-10 flex flex-col items-center gap-1', offset)}>
+    <div className="relative h-16 w-16">
+      {isNext && (
+        <span className="absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-xl bg-brand-600 px-3 py-1 text-xs font-extrabold tracking-wide text-white shadow-md animate-bounce">
+          {t('dashboard.startBadge')}
+          <span className="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-4 border-transparent border-t-brand-600" />
+        </span>
+      )}
       <button
         type="button"
         disabled={locked}
@@ -43,7 +48,9 @@ export function LessonNode({
       >
         {locked ? <Lock size={20} /> : nodeIcon(lesson, status)}
       </button>
-      <span className="max-w-20 text-center text-xs font-semibold text-slate-500 dark:text-slate-400">{lesson.title}</span>
+      <span className="absolute left-1/2 top-full mt-1.5 w-24 -translate-x-1/2 text-center text-xs font-semibold leading-tight text-slate-500 dark:text-slate-400">
+        {lesson.title}
+      </span>
     </div>
   )
 }

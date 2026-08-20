@@ -120,6 +120,7 @@ const pt = {
   },
   dashboard: {
     continueFrom: 'Continue de onde parou',
+    startBadge: 'COMEÇAR',
     trailComplete: 'Trilha concluída!',
     continueButton: 'Continuar',
     noHearts: 'Sem corações',
@@ -371,6 +372,7 @@ const en: typeof pt = {
   },
   dashboard: {
     continueFrom: 'Continue where you left off',
+    startBadge: 'START',
     trailComplete: 'Path complete!',
     continueButton: 'Continue',
     noHearts: 'No hearts',
