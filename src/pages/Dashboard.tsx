@@ -12,9 +12,11 @@ import { Button } from '../components/ui/Button'
 import { ProgressBar } from '../components/ui/ProgressBar'
 import { dueReviewItems } from '../lib/review'
 import { todayLocalDate } from '../lib/auth'
+import { useT } from '../lib/i18n'
 
 export default function Dashboard() {
   const navigate = useNavigate()
+  const t = useT()
   const user = useAppStore((s) => s.currentUser())
   const reviewQueue = useAppStore((s) => s.reviewQueue)
   const loadReviewQueue = useAppStore((s) => s.loadReviewQueue)
@@ -33,8 +35,8 @@ export default function Dashboard() {
     <div>
       <Card className="mb-6 flex flex-col items-center justify-between gap-4 p-6 sm:flex-row">
         <div>
-          <p className="text-sm font-semibold text-slate-400">Continue de onde parou</p>
-          <h1 className="text-xl font-extrabold text-slate-800">{nextLesson ? nextLesson.title : 'Trilha concluída!'}</h1>
+          <p className="text-sm font-semibold text-slate-400">{t('dashboard.continueFrom')}</p>
+          <h1 className="text-xl font-extrabold text-slate-800">{nextLesson ? nextLesson.title : t('dashboard.trailComplete')}</h1>
         </div>
         {nextLesson && (
           <Button
@@ -42,7 +44,7 @@ export default function Dashboard() {
             disabled={user.livesCurrent <= 0}
             onClick={() => navigate(`/app/licao/${nextLesson.id}`)}
           >
-            {user.livesCurrent <= 0 ? 'Sem corações' : 'Continuar'}
+            {user.livesCurrent <= 0 ? t('dashboard.noHearts') : t('dashboard.continueButton')}
           </Button>
         )}
       </Card>
@@ -53,13 +55,13 @@ export default function Dashboard() {
             <RotateCcw className="text-glow-600" size={24} />
             <div>
               <p className="font-extrabold text-slate-800">
-                {dueCount} {dueCount === 1 ? 'item' : 'itens'} para revisar hoje
+                {dueCount} {dueCount === 1 ? t('dashboard.reviewDueItem') : t('dashboard.reviewDueItems')} {t('dashboard.reviewDueSuffix')}
               </p>
-              <p className="text-sm text-slate-500">Reforce o que você errou antes — não gasta corações.</p>
+              <p className="text-sm text-slate-500">{t('dashboard.reviewDueSubtitle')}</p>
             </div>
           </div>
           <Button variant="secondary" onClick={() => navigate('/app/revisao')}>
-            Revisar agora
+            {t('dashboard.reviewNow')}
           </Button>
         </Card>
       )}
@@ -73,7 +75,7 @@ export default function Dashboard() {
           <section key={level.id} className="mb-10">
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <p className="text-xs font-bold uppercase tracking-wide text-brand-500">Nível {level.code}</p>
+                <p className="text-xs font-bold uppercase tracking-wide text-brand-500">{t('dashboard.level')} {level.code}</p>
                 <h2 className="text-lg font-extrabold text-slate-800">{level.title}</h2>
                 <p className="text-sm text-slate-500">{level.description}</p>
               </div>
@@ -83,13 +85,11 @@ export default function Dashboard() {
             {unlocked && hasContent && <ProgressBar value={pct} max={100} className="mb-6" />}
 
             {!unlocked && (
-              <Card className="p-6 text-center text-slate-400">
-                Conclua a prova do nível anterior para desbloquear.
-              </Card>
+              <Card className="p-6 text-center text-slate-400">{t('dashboard.lockedMessage')}</Card>
             )}
 
             {unlocked && !hasContent && (
-              <Card className="p-6 text-center text-slate-400">Conteúdo deste nível em construção. Volte em breve!</Card>
+              <Card className="p-6 text-center text-slate-400">{t('dashboard.inConstruction')}</Card>
             )}
 
             {unlocked &&
@@ -111,7 +111,7 @@ export default function Dashboard() {
       })}
 
       <p className={clsx('text-center text-sm text-slate-400', COURSE.length === 0 && 'hidden')}>
-        Mais níveis e unidades chegando em breve. 🚀
+        {t('dashboard.moreComingSoon')}
       </p>
     </div>
   )

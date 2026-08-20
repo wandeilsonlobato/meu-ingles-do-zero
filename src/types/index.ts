@@ -110,16 +110,21 @@ export const DAILY_GOAL_XP: Record<DailyGoal, number> = {
   intenso: 50,
 }
 
+export type InterfaceLocale = 'pt' | 'en'
+
 export interface User {
   id: string
   name: string
   email: string
   avatarEmoji: string
+  avatarPhotoUrl?: string
+  bio?: string
   createdAt: string
   isAdmin: boolean
   onboarded: boolean
   reasonToLearn?: string
   dailyGoal: DailyGoal
+  interfaceLocale: InterfaceLocale
   xpTotal: number
   coins: number
   streakCurrent: number
@@ -169,4 +174,26 @@ export interface LeaderboardRow {
   league: LeagueTier
   xpThisWeek: number
   weekStartDate: string
+}
+
+/** Perfil público de outro aluno (busca, amigos, visualização) — nunca inclui e-mail. */
+export interface PublicProfile {
+  id: string
+  name: string
+  avatarEmoji: string
+  avatarPhotoUrl?: string
+  bio?: string
+  streakCurrent: number
+  league: LeagueTier
+  achievements: { id: string; name: string; icon: string }[]
+}
+
+export type FriendshipStatus = 'pending' | 'accepted'
+
+export interface Friendship {
+  id: string
+  requesterId: string
+  addresseeId: string
+  status: FriendshipStatus
+  createdAt: string
 }

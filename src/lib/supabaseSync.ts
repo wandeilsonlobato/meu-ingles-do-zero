@@ -1,5 +1,19 @@
 import { supabase } from './supabaseClient'
-import type { CustomLessonDraft, DailyGoal, Exercise, LeaderboardRow, LeagueTier, LessonStatus, ReviewItem, User, UserProgressEntry } from '../types'
+import type {
+  CustomLessonDraft,
+  DailyGoal,
+  Exercise,
+  Friendship,
+  FriendshipStatus,
+  InterfaceLocale,
+  LeaderboardRow,
+  LeagueTier,
+  LessonStatus,
+  PublicProfile,
+  ReviewItem,
+  User,
+  UserProgressEntry,
+} from '../types'
 
 /**
  * Ponte entre o formato `User` usado pela UI/store (camelCase, já no shape
@@ -13,10 +27,13 @@ interface ProfileRow {
   name: string
   email: string
   avatar_emoji: string
+  avatar_photo_url: string | null
+  bio: string | null
   is_admin: boolean
   onboarded: boolean
   reason_to_learn: string | null
   daily_goal: DailyGoal
+  interface_locale: InterfaceLocale
   xp_total: number
   coins: number
   streak_current: number
@@ -73,11 +90,14 @@ function assembleUser(profile: ProfileRow, progressRows: ProgressRow[], achievem
     name: profile.name,
     email: profile.email,
     avatarEmoji: profile.avatar_emoji,
+    avatarPhotoUrl: profile.avatar_photo_url ?? undefined,
+    bio: profile.bio ?? undefined,
     isAdmin: profile.is_admin,
     createdAt: profile.created_at,
     onboarded: profile.onboarded,
     reasonToLearn: profile.reason_to_learn ?? undefined,
     dailyGoal: profile.daily_goal,
+    interfaceLocale: profile.interface_locale,
     xpTotal: profile.xp_total,
     coins: profile.coins,
     streakCurrent: profile.streak_current,
@@ -121,10 +141,14 @@ export async function waitForProfile(userId: string, attempts = 8): Promise<User
 }
 
 const PROFILE_FIELD_MAP: Partial<Record<keyof User, string>> = {
+  name: 'name',
   avatarEmoji: 'avatar_emoji',
+  avatarPhotoUrl: 'avatar_photo_url',
+  bio: 'bio',
   onboarded: 'onboarded',
   reasonToLearn: 'reason_to_learn',
   dailyGoal: 'daily_goal',
+  interfaceLocale: 'interface_locale',
   xpTotal: 'xp_total',
   coins: 'coins',
   streakCurrent: 'streak_current',
@@ -315,4 +339,126 @@ export async function deleteCustomLessonDraftRow(id: string): Promise<void> {
   if (!supabase) return
   const { error } = await supabase.from('custom_lesson_drafts').delete().eq('id', id)
   if (error) console.error('Falha ao excluir rascunho no Supabase:', error.message)
+}
+
+/** Faz upload de uma foto de perfil para o bucket público `avatars/{userId}/...` e retorna a URL pública. */
+export async function uploadAvatarPhoto(userId: string, file: File): Promise<{ url: string | null; error?: string }> {
+  if (!supabase) return { url: null, error: 'Backend não configurado.' }
+  const ext = file.name.split('.').pop() ?? 'jpg'
+  const path = `${userId}/photo-${Date.now()}.${ext}`
+  const { error: uploadError } = await supabase.storage.from('avatars').upload(path, file, { upsert: true })
+  if (uploadError) return { url: null, error: uploadError.message }
+  const { data } = supabase.storage.from('avatars').getPublicUrl(path)
+  return { url: data.publicUrl }
+}
+
+interface PublicProfileRow {
+  id: string
+  name: string
+  avatar_emoji: string
+  avatar_photo_url: string | null
+  bio: string | null
+  streak_current: number
+  league: LeagueTier
+}
+
+function mapPublicProfileRow(row: PublicProfileRow, achievements: { id: string; name: string; icon: string }[]): PublicProfile {
+  return {
+    id: row.id,
+    name: row.name,
+    avatarEmoji: row.avatar_emoji,
+    avatarPhotoUrl: row.avatar_photo_url ?? undefined,
+    bio: row.bio ?? undefined,
+    streakCurrent: row.streak_current,
+    league: row.league,
+    achievements,
+  }
+}
+
+/** Busca alunos pelo nome (case-insensitive, parcial). Não inclui o próprio usuário. */
+export async function searchProfiles(query: string, excludeUserId: string): Promise<PublicProfile[]> {
+  if (!supabase || !query.trim()) return []
+  const { data, error } = await supabase
+    .from('public_profiles')
+    .select('id, name, avatar_emoji, avatar_photo_url, bio, streak_current, league')
+    .ilike('name', `%${query.trim()}%`)
+    .neq('id', excludeUserId)
+    .limit(20)
+  if (error || !data) return []
+  return (data as PublicProfileRow[]).map((r) => mapPublicProfileRow(r, []))
+}
+
+/** Busca vários perfis públicos de uma vez pelos ids (sem conquistas — usado só para listas de amigos/pedidos). */
+export async function fetchPublicProfilesByIds(ids: string[]): Promise<PublicProfile[]> {
+  if (!supabase || ids.length === 0) return []
+  const { data, error } = await supabase
+    .from('public_profiles')
+    .select('id, name, avatar_emoji, avatar_photo_url, bio, streak_current, league')
+    .in('id', ids)
+  if (error || !data) return []
+  return (data as PublicProfileRow[]).map((r) => mapPublicProfileRow(r, []))
+}
+
+/** Perfil público completo de um aluno, incluindo algumas conquistas (para a tela de perfil de amigo/busca). */
+export async function fetchPublicProfile(userId: string, achievementCatalog: { id: string; name: string; icon: string }[]): Promise<PublicProfile | null> {
+  if (!supabase) return null
+  const [{ data: profile }, { data: achievementRows }] = await Promise.all([
+    supabase.from('public_profiles').select('id, name, avatar_emoji, avatar_photo_url, bio, streak_current, league').eq('id', userId).single(),
+    supabase.from('user_achievements').select('achievement_id').eq('user_id', userId),
+  ])
+  if (!profile) return null
+  const earnedIds = new Set(((achievementRows as { achievement_id: string }[]) ?? []).map((a) => a.achievement_id))
+  const achievements = achievementCatalog.filter((a) => earnedIds.has(a.id))
+  return mapPublicProfileRow(profile as PublicProfileRow, achievements)
+}
+
+interface FriendshipRow {
+  id: string
+  requester_id: string
+  addressee_id: string
+  status: FriendshipStatus
+  created_at: string
+}
+
+function mapFriendshipRow(row: FriendshipRow): Friendship {
+  return { id: row.id, requesterId: row.requester_id, addresseeId: row.addressee_id, status: row.status, createdAt: row.created_at }
+}
+
+/** Todas as amizades (pendentes e aceitas) em que o usuário está envolvido, dos dois lados. */
+export async function fetchFriendships(userId: string): Promise<Friendship[]> {
+  if (!supabase) return []
+  const { data, error } = await supabase
+    .from('friendships')
+    .select('*')
+    .or(`requester_id.eq.${userId},addressee_id.eq.${userId}`)
+  if (error || !data) return []
+  return (data as FriendshipRow[]).map(mapFriendshipRow)
+}
+
+export async function sendFriendRequest(requesterId: string, addresseeId: string): Promise<{ ok: boolean; error?: string; friendship?: Friendship }> {
+  if (!supabase) return { ok: false, error: 'Backend não configurado.' }
+  const { data, error } = await supabase
+    .from('friendships')
+    .insert({ requester_id: requesterId, addressee_id: addresseeId })
+    .select()
+    .single()
+  if (error) return { ok: false, error: error.message.includes('duplicate') ? 'Já existe um pedido entre vocês.' : error.message }
+  return { ok: true, friendship: mapFriendshipRow(data as FriendshipRow) }
+}
+
+export async function respondToFriendRequest(id: string, accept: boolean): Promise<void> {
+  if (!supabase) return
+  if (accept) {
+    const { error } = await supabase.from('friendships').update({ status: 'accepted', responded_at: new Date().toISOString() }).eq('id', id)
+    if (error) console.error('Falha ao aceitar pedido de amizade:', error.message)
+  } else {
+    const { error } = await supabase.from('friendships').delete().eq('id', id)
+    if (error) console.error('Falha ao recusar pedido de amizade:', error.message)
+  }
+}
+
+export async function removeFriendship(id: string): Promise<void> {
+  if (!supabase) return
+  const { error } = await supabase.from('friendships').delete().eq('id', id)
+  if (error) console.error('Falha ao remover amizade:', error.message)
 }

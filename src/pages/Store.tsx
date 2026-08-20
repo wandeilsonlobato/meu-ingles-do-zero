@@ -4,8 +4,10 @@ import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { SHOP_ITEMS } from '../data/shop'
 import { CoinsBadge } from '../components/ui/StatusBadges'
+import { useT } from '../lib/i18n'
 
 export default function Store() {
+  const t = useT()
   const user = useAppStore((s) => s.currentUser())
   const purchaseItem = useAppStore((s) => s.purchaseItem)
   const [message, setMessage] = useState<string | null>(null)
@@ -14,9 +16,9 @@ export default function Store() {
   function handleBuy(itemId: string) {
     const result = purchaseItem(itemId)
     if (result.ok && result.newAchievements && result.newAchievements.length > 0) {
-      setMessage(`Item resgatado! Conquista desbloqueada: ${result.newAchievements[0].icon} ${result.newAchievements[0].name}`)
+      setMessage(t('store.achievementUnlocked', { name: `${result.newAchievements[0].icon} ${result.newAchievements[0].name}` }))
     } else {
-      setMessage(result.ok ? 'Item resgatado com sucesso!' : result.error ?? 'Não foi possível comprar.')
+      setMessage(result.ok ? t('store.purchaseSuccess') : result.error ?? t('store.purchaseError'))
     }
     setTimeout(() => setMessage(null), 3000)
   }
@@ -27,7 +29,7 @@ export default function Store() {
   return (
     <div className="mx-auto max-w-3xl">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-extrabold text-slate-800">Loja de recompensas</h1>
+        <h1 className="text-2xl font-extrabold text-slate-800">{t('store.title')}</h1>
         <CoinsBadge coins={user.coins} />
       </div>
 
@@ -37,7 +39,7 @@ export default function Store() {
         </div>
       )}
 
-      <h2 className="mb-3 font-bold text-slate-700">Itens</h2>
+      <h2 className="mb-3 font-bold text-slate-700">{t('store.items')}</h2>
       <div className="mb-8 grid gap-4 sm:grid-cols-2">
         {functionalItems.map((item) => {
           const canAfford = user.coins >= item.cost
@@ -56,7 +58,7 @@ export default function Store() {
         })}
       </div>
 
-      <h2 className="mb-3 font-bold text-slate-700">Avatares</h2>
+      <h2 className="mb-3 font-bold text-slate-700">{t('store.avatars')}</h2>
       <div className="grid gap-4 sm:grid-cols-2">
         {avatarItems.map((item) => {
           const owned = user.ownedCosmetics.includes(item.id)
@@ -74,16 +76,14 @@ export default function Store() {
                 disabled={owned || !canAfford}
                 onClick={() => handleBuy(item.id)}
               >
-                {owned ? 'Adquirido' : `${item.cost} 🪙`}
+                {owned ? t('store.acquired') : `${item.cost} 🪙`}
               </Button>
             </Card>
           )
         })}
       </div>
 
-      <p className="mt-6 text-center text-xs text-slate-400">
-        Ganhe moedas completando lições: você recebe metade do XP da lição também em moedas.
-      </p>
+      <p className="mt-6 text-center text-xs text-slate-400">{t('store.footerHint')}</p>
     </div>
   )
 }

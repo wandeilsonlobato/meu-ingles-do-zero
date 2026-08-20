@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Gem, PartyPopper, RotateCcw, XCircle } from 'lucide-react'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
+import { useT } from '../lib/i18n'
 import type { Exercise } from '../types'
 
 interface ResultState {
@@ -16,6 +17,7 @@ interface ResultState {
 export default function LessonResult() {
   const { lessonId } = useParams<{ lessonId: string }>()
   const navigate = useNavigate()
+  const t = useT()
   const location = useLocation()
   const state = location.state as ResultState | null
 
@@ -31,10 +33,10 @@ export default function LessonResult() {
     <div className="mx-auto max-w-xl text-center">
       <div className="mb-3 text-6xl">{accuracyPct === 100 ? '🏆' : accuracyPct >= 60 ? '🎉' : '💪'}</div>
       <h1 className="mb-1 text-2xl font-extrabold text-slate-800">
-        {accuracyPct === 100 ? 'Perfeito!' : 'Lição concluída!'}
+        {accuracyPct === 100 ? t('lessonResult.perfect') : t('lessonResult.complete')}
       </h1>
       <p className="mb-6 text-slate-500">
-        Você acertou {state.correctCount} de {state.totalCount} exercícios ({accuracyPct}%).
+        {t('lessonResult.scoreLine', { correct: state.correctCount, total: state.totalCount, pct: accuracyPct })}
       </p>
 
       <Card className="mb-6 flex items-center justify-center gap-3 p-6">
@@ -46,7 +48,7 @@ export default function LessonResult() {
         <Card className="mb-6 p-6">
           <p className="mb-3 flex items-center justify-center gap-2 font-bold text-slate-700">
             <PartyPopper size={20} className="text-glow-500" />
-            Nova(s) conquista(s)!
+            {t('lessonResult.newAchievement')}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             {state.newAchievements.map((a) => (
@@ -63,7 +65,7 @@ export default function LessonResult() {
         <Card className="mb-6 p-6 text-left">
           <p className="mb-3 flex items-center gap-2 font-bold text-slate-700">
             <XCircle size={20} className="text-heart-500" />
-            Revise o que você errou
+            {t('lessonResult.reviewMistakesTitle')}
           </p>
           <div className="flex flex-col gap-3">
             {state.wrongExercises.map((ex) => (
@@ -78,9 +80,9 @@ export default function LessonResult() {
 
       <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
         <Button icon={<RotateCcw size={18} />} variant="secondary" onClick={() => navigate(`/app/licao/${lessonId}`)}>
-          Praticar novamente
+          {t('lessonResult.practiceAgain')}
         </Button>
-        <Button onClick={() => navigate('/app')}>Voltar à trilha</Button>
+        <Button onClick={() => navigate('/app')}>{t('lessonResult.backToTrail')}</Button>
       </div>
     </div>
   )

@@ -12,6 +12,7 @@ function makeUser(overrides: Partial<User> = {}): User {
     isAdmin: false,
     onboarded: true,
     dailyGoal: 'regular',
+    interfaceLocale: 'pt',
     xpTotal: 0,
     coins: 0,
     streakCurrent: 0,

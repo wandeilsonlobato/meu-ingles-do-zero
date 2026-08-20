@@ -4,35 +4,21 @@ import clsx from 'clsx'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { useAppStore } from '../store/useAppStore'
-import { DAILY_GOAL_LABELS } from '../lib/gamification'
+import { useT } from '../lib/i18n'
 import { PLACEMENT_QUESTIONS } from '../data/placementTest'
 import { MultipleChoiceExercise } from '../components/exercises/MultipleChoiceExercise'
 import type { DailyGoal } from '../types'
 
-const REASONS = [
-  { id: 'trabalho', label: '💼 Trabalho / carreira' },
-  { id: 'viagem', label: '✈️ Viagens' },
-  { id: 'estudo', label: '🎓 Estudar fora' },
-  { id: 'filmes', label: '🎬 Filmes, séries e música' },
-  { id: 'curiosidade', label: '🧠 Curiosidade / hobby' },
-]
-
-const LEVELS = [
-  { id: 'zero', label: 'Nunca estudei inglês' },
-  { id: 'basico', label: 'Sei algumas palavras soltas' },
-  { id: 'ja_estudei', label: 'Já estudei, mas esqueci quase tudo' },
-]
-
 const GOALS: DailyGoal[] = ['casual', 'regular', 'serio', 'intenso']
+const GOAL_KEYS: Record<DailyGoal, string> = {
+  casual: 'common.goalCasual',
+  regular: 'common.goalRegular',
+  serio: 'common.goalSerious',
+  intenso: 'common.goalIntense',
+}
 
 type PlacementStage = 'offer' | 'testing' | 'result'
 type PlacementSkip = 'A0' | 'A1' | null
-
-const START_LABELS: Record<'A0' | 'A1' | 'A2', string> = {
-  A0: 'Primeiros Passos (Nível 0)',
-  A1: 'Iniciante (Nível 1)',
-  A2: 'Básico (Nível 2)',
-}
 
 function computePlacement(scores: Record<'A0' | 'A1' | 'A2', number>): PlacementSkip {
   const THRESHOLD = 2
@@ -43,6 +29,7 @@ function computePlacement(scores: Record<'A0' | 'A1' | 'A2', number>): Placement
 
 export default function Onboarding() {
   const navigate = useNavigate()
+  const t = useT()
   const completeOnboarding = useAppStore((s) => s.completeOnboarding)
   const applyPlacement = useAppStore((s) => s.applyPlacement)
   const [step, setStep] = useState(0)
@@ -56,6 +43,20 @@ export default function Onboarding() {
   const [placementLastCorrect, setPlacementLastCorrect] = useState<boolean | null>(null)
   const [placementScores, setPlacementScores] = useState<Record<'A0' | 'A1' | 'A2', number>>({ A0: 0, A1: 0, A2: 0 })
   const [placementResult, setPlacementResult] = useState<PlacementSkip>(null)
+
+  const REASONS = [
+    { id: 'trabalho', label: t('onboarding.reasonWork') },
+    { id: 'viagem', label: t('onboarding.reasonTravel') },
+    { id: 'estudo', label: t('onboarding.reasonStudy') },
+    { id: 'filmes', label: t('onboarding.reasonMovies') },
+    { id: 'curiosidade', label: t('onboarding.reasonCuriosity') },
+  ]
+
+  const LEVELS = [
+    { id: 'zero', label: t('onboarding.levelZero') },
+    { id: 'basico', label: t('onboarding.levelBasic') },
+    { id: 'ja_estudei', label: t('onboarding.levelForgot') },
+  ]
 
   const steps = ['motivo', 'nivel', 'nivelamento', 'meta', 'confirmacao']
 
@@ -94,7 +95,7 @@ export default function Onboarding() {
     setPlacementLastCorrect(null)
   }
 
-  const startLabel = placementResult ? START_LABELS[placementResult === 'A0' ? 'A1' : 'A2'] : START_LABELS.A0
+  const startLabel = t(placementResult ? (placementResult === 'A0' ? 'onboarding.startLevel1' : 'onboarding.startLevel2') : 'onboarding.startLevel0')
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-brand-50 px-4 py-10">
@@ -107,8 +108,8 @@ export default function Onboarding() {
 
         {step === 0 && (
           <div>
-            <h1 className="mb-1 text-2xl font-extrabold text-slate-800">Por que você quer aprender inglês?</h1>
-            <p className="mb-6 text-slate-500">Isso nos ajuda a te mostrar exemplos mais relevantes.</p>
+            <h1 className="mb-1 text-2xl font-extrabold text-slate-800">{t('onboarding.step1Title')}</h1>
+            <p className="mb-6 text-slate-500">{t('onboarding.step1Subtitle')}</p>
             <div className="flex flex-col gap-2">
               {REASONS.map((r) => (
                 <button
@@ -124,15 +125,15 @@ export default function Onboarding() {
               ))}
             </div>
             <Button className="mt-6" fullWidth disabled={!reason} onClick={() => setStep(1)}>
-              Continuar
+              {t('common.continue')}
             </Button>
           </div>
         )}
 
         {step === 1 && (
           <div>
-            <h1 className="mb-1 text-2xl font-extrabold text-slate-800">Qual seu nível hoje?</h1>
-            <p className="mb-6 text-slate-500">Sem julgamentos — todo mundo começa de algum lugar.</p>
+            <h1 className="mb-1 text-2xl font-extrabold text-slate-800">{t('onboarding.step2Title')}</h1>
+            <p className="mb-6 text-slate-500">{t('onboarding.step2Subtitle')}</p>
             <div className="flex flex-col gap-2">
               {LEVELS.map((l) => (
                 <button
@@ -148,12 +149,10 @@ export default function Onboarding() {
               ))}
             </div>
             <p className="mt-3 text-xs text-slate-400">
-              {level === 'zero'
-                ? 'Vamos começar pelo Nível 0 para garantir uma base sólida.'
-                : 'Se você já sabe algo, na próxima tela dá pra fazer um teste rápido para começar mais adiantado(a).'}
+              {level === 'zero' ? t('onboarding.step2HintZero') : t('onboarding.step2HintOther')}
             </p>
             <Button className="mt-4" fullWidth disabled={!level} onClick={goToNivelamentoOrSkip}>
-              Continuar
+              {t('common.continue')}
             </Button>
           </div>
         )}
@@ -163,19 +162,18 @@ export default function Onboarding() {
             {placementStage === 'offer' && (
               <div className="text-center">
                 <div className="mb-4 text-5xl">🧭</div>
-                <h1 className="mb-2 text-2xl font-extrabold text-slate-800">Teste de nivelamento (opcional)</h1>
+                <h1 className="mb-2 text-2xl font-extrabold text-slate-800">{t('onboarding.placementOfferTitle')}</h1>
                 <p className="mb-6 text-slate-500">
-                  Você disse que já tem alguma base. Quer fazer um teste rápido de {PLACEMENT_QUESTIONS.length}{' '}
-                  perguntas (2 minutos) para ver se pode começar mais adiantado(a)?
+                  {t('onboarding.placementOfferBody', { count: PLACEMENT_QUESTIONS.length })}
                 </p>
                 <Button fullWidth onClick={() => setPlacementStage('testing')}>
-                  Fazer teste
+                  {t('onboarding.placementTakeTest')}
                 </Button>
                 <button
                   className="mt-3 text-sm font-semibold text-slate-400 hover:text-slate-600"
                   onClick={() => setStep(3)}
                 >
-                  Pular, começar do Nível 0
+                  {t('onboarding.placementSkip')}
                 </button>
               </div>
             )}
@@ -183,7 +181,7 @@ export default function Onboarding() {
             {placementStage === 'testing' && (
               <div>
                 <p className="mb-4 text-sm font-semibold text-slate-400">
-                  Pergunta {placementIndex + 1} de {PLACEMENT_QUESTIONS.length}
+                  {t('onboarding.placementQuestionOf', { current: placementIndex + 1, total: PLACEMENT_QUESTIONS.length })}
                 </p>
                 <MultipleChoiceExercise
                   key={PLACEMENT_QUESTIONS[placementIndex].exercise.id}
@@ -194,7 +192,7 @@ export default function Onboarding() {
                 />
                 {placementAnswered && (
                   <Button className="mt-4" fullWidth onClick={nextPlacementQuestion}>
-                    {placementIndex + 1 >= PLACEMENT_QUESTIONS.length ? 'Ver resultado' : 'Continuar'}
+                    {placementIndex + 1 >= PLACEMENT_QUESTIONS.length ? t('onboarding.placementSeeResult') : t('common.continue')}
                   </Button>
                 )}
               </div>
@@ -203,14 +201,14 @@ export default function Onboarding() {
             {placementStage === 'result' && (
               <div className="text-center">
                 <div className="mb-4 text-5xl">🎯</div>
-                <h1 className="mb-2 text-2xl font-extrabold text-slate-800">Você vai começar em: {startLabel}</h1>
+                <h1 className="mb-2 text-2xl font-extrabold text-slate-800">
+                  {t('onboarding.placementResultTitle', { level: startLabel })}
+                </h1>
                 <p className="mb-6 text-slate-500">
-                  {placementResult
-                    ? 'Com base nas suas respostas, já marcamos os níveis anteriores como concluídos.'
-                    : 'Sem problemas — uma base sólida no início faz toda a diferença.'}
+                  {placementResult ? t('onboarding.placementResultWithSkip') : t('onboarding.placementResultNoSkip')}
                 </p>
                 <Button fullWidth onClick={() => setStep(3)}>
-                  Continuar
+                  {t('common.continue')}
                 </Button>
               </div>
             )}
@@ -219,8 +217,8 @@ export default function Onboarding() {
 
         {step === 3 && (
           <div>
-            <h1 className="mb-1 text-2xl font-extrabold text-slate-800">Quanto tempo por dia você quer estudar?</h1>
-            <p className="mb-6 text-slate-500">Você pode mudar isso depois nas configurações.</p>
+            <h1 className="mb-1 text-2xl font-extrabold text-slate-800">{t('onboarding.step4Title')}</h1>
+            <p className="mb-6 text-slate-500">{t('onboarding.step4Subtitle')}</p>
             <div className="flex flex-col gap-2">
               {GOALS.map((g) => (
                 <button
@@ -231,12 +229,12 @@ export default function Onboarding() {
                     goal === g ? 'border-brand-500 bg-brand-50' : 'border-slate-200 hover:border-brand-200',
                   )}
                 >
-                  {DAILY_GOAL_LABELS[g]}
+                  {t(GOAL_KEYS[g])}
                 </button>
               ))}
             </div>
             <Button className="mt-6" fullWidth disabled={!goal} onClick={() => setStep(4)}>
-              Continuar
+              {t('common.continue')}
             </Button>
           </div>
         )}
@@ -244,12 +242,10 @@ export default function Onboarding() {
         {step === 4 && (
           <div className="text-center">
             <div className="mb-4 text-5xl">🎉</div>
-            <h1 className="mb-2 text-2xl font-extrabold text-slate-800">Tudo pronto!</h1>
-            <p className="mb-8 text-slate-500">
-              Sua trilha personalizada está pronta. Vamos começar em {startLabel}.
-            </p>
+            <h1 className="mb-2 text-2xl font-extrabold text-slate-800">{t('onboarding.finalTitle')}</h1>
+            <p className="mb-8 text-slate-500">{t('onboarding.finalBody', { level: startLabel })}</p>
             <Button fullWidth onClick={finish}>
-              Começar a aprender
+              {t('onboarding.finalButton')}
             </Button>
           </div>
         )}

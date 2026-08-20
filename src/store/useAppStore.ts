@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { CustomLessonDraft, DailyGoal, Exercise, ReviewItem, User, UserProgressEntry } from '../types'
+import type { CustomLessonDraft, Exercise, DailyGoal, Friendship, InterfaceLocale, ReviewItem, User, UserProgressEntry } from '../types'
 import { COURSE } from '../data/course'
 import { ACHIEVEMENTS } from '../data/achievements'
 import { SHOP_ITEMS } from '../data/shop'
@@ -8,11 +8,16 @@ import {
   deleteCustomLessonDraftRow,
   deleteReviewItem,
   fetchCustomLessonDrafts,
+  fetchFriendships,
   fetchReviewQueue,
   insertCustomLessonDraft,
   persistNewAchievements,
   persistProfilePatch,
   persistProgressEntry,
+  removeFriendship,
+  respondToFriendRequest,
+  sendFriendRequest,
+  uploadAvatarPhoto,
   upsertReviewItem,
   waitForProfile,
 } from '../lib/supabaseSync'
@@ -65,6 +70,7 @@ interface AppState {
   authLoading: boolean
   customLessonDrafts: CustomLessonDraft[]
   reviewQueue: ReviewItem[]
+  friendships: Friendship[]
 
   initAuth: () => Promise<void>
   signUp: (name: string, email: string, password: string) => Promise<AuthResult>
@@ -81,6 +87,15 @@ interface AppState {
   purchaseItem: (itemId: string) => PurchaseResult
   updateDailyGoal: (goal: DailyGoal) => void
   updateAvatar: (emoji: string) => void
+  updateInterfaceLocale: (locale: InterfaceLocale) => void
+  updateProfileInfo: (data: { name?: string; bio?: string }) => void
+  uploadAvatarPhotoAction: (file: File) => Promise<{ ok: boolean; error?: string }>
+  removeAvatarPhoto: () => void
+
+  loadFriendships: () => Promise<void>
+  sendFriendRequestAction: (targetId: string) => Promise<{ ok: boolean; error?: string }>
+  respondToFriendRequestAction: (id: string, accept: boolean) => Promise<void>
+  removeFriendAction: (id: string) => Promise<void>
 
   loadCustomLessonDrafts: () => Promise<void>
   addCustomLessonDraft: (title: string, unitTitle: string, exercises: Exercise[]) => Promise<void>
@@ -123,6 +138,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
   authLoading: true,
   customLessonDrafts: [],
   reviewQueue: [],
+  friendships: [],
 
   currentUser: () => {
     const state = get()
@@ -410,8 +426,79 @@ export const useAppStore = create<AppState>()((set, get) => ({
     const state = get()
     const user = state.currentUser()
     if (!user) return
-    set({ users: { ...state.users, [user.id]: { ...user, avatarEmoji: emoji } } })
-    void persistProfilePatch(user.id, { avatarEmoji: emoji })
+    set({ users: { ...state.users, [user.id]: { ...user, avatarEmoji: emoji, avatarPhotoUrl: undefined } } })
+    void persistProfilePatch(user.id, { avatarEmoji: emoji, avatarPhotoUrl: undefined })
+  },
+
+  updateInterfaceLocale: (locale) => {
+    const state = get()
+    const user = state.currentUser()
+    if (!user) return
+    set({ users: { ...state.users, [user.id]: { ...user, interfaceLocale: locale } } })
+    void persistProfilePatch(user.id, { interfaceLocale: locale })
+  },
+
+  updateProfileInfo: ({ name, bio }) => {
+    const state = get()
+    const user = state.currentUser()
+    if (!user) return
+    const patch: Partial<User> = {}
+    if (name !== undefined) patch.name = name
+    if (bio !== undefined) patch.bio = bio
+    set({ users: { ...state.users, [user.id]: { ...user, ...patch } } })
+    void persistProfilePatch(user.id, patch)
+  },
+
+  uploadAvatarPhotoAction: async (file) => {
+    const state = get()
+    const user = state.currentUser()
+    if (!user) return { ok: false, error: 'Sem usuário logado.' }
+    const result = await uploadAvatarPhoto(user.id, file)
+    if (!result.url) return { ok: false, error: result.error ?? 'Não foi possível enviar a foto.' }
+    set({ users: { ...state.users, [user.id]: { ...user, avatarPhotoUrl: result.url } } })
+    void persistProfilePatch(user.id, { avatarPhotoUrl: result.url })
+    return { ok: true }
+  },
+
+  removeAvatarPhoto: () => {
+    const state = get()
+    const user = state.currentUser()
+    if (!user) return
+    set({ users: { ...state.users, [user.id]: { ...user, avatarPhotoUrl: undefined } } })
+    void persistProfilePatch(user.id, { avatarPhotoUrl: undefined })
+  },
+
+  loadFriendships: async () => {
+    const user = get().currentUser()
+    if (!user) return
+    const friendships = await fetchFriendships(user.id)
+    set({ friendships })
+  },
+
+  sendFriendRequestAction: async (targetId) => {
+    const user = get().currentUser()
+    if (!user) return { ok: false, error: 'Sem usuário logado.' }
+    const result = await sendFriendRequest(user.id, targetId)
+    if (result.ok && result.friendship) {
+      set((state) => ({ friendships: [...state.friendships, result.friendship!] }))
+    }
+    return { ok: result.ok, error: result.error }
+  },
+
+  respondToFriendRequestAction: async (id, accept) => {
+    await respondToFriendRequest(id, accept)
+    if (accept) {
+      set((state) => ({
+        friendships: state.friendships.map((f) => (f.id === id ? { ...f, status: 'accepted' } : f)),
+      }))
+    } else {
+      set((state) => ({ friendships: state.friendships.filter((f) => f.id !== id) }))
+    }
+  },
+
+  removeFriendAction: async (id) => {
+    await removeFriendship(id)
+    set((state) => ({ friendships: state.friendships.filter((f) => f.id !== id) }))
   },
 
   loadCustomLessonDrafts: async () => {

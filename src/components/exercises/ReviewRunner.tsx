@@ -5,6 +5,7 @@ import type { Exercise } from '../../types'
 import { Button } from '../ui/Button'
 import { ProgressBar } from '../ui/ProgressBar'
 import { useAppStore } from '../../store/useAppStore'
+import { useT } from '../../lib/i18n'
 import { MultipleChoiceExercise } from './MultipleChoiceExercise'
 import { FillBlankExercise } from './FillBlankExercise'
 import { SentenceOrderExercise } from './SentenceOrderExercise'
@@ -37,6 +38,7 @@ interface ReviewRunnerProps {
  * gastar corações (é prática extra) e com XP reduzido por item.
  */
 export function ReviewRunner({ exercises, onDone }: ReviewRunnerProps) {
+  const t = useT()
   const resolveReviewCorrect = useAppStore((s) => s.resolveReviewCorrect)
   const resolveReviewWrong = useAppStore((s) => s.resolveReviewWrong)
 
@@ -95,17 +97,17 @@ export function ReviewRunner({ exercises, onDone }: ReviewRunnerProps) {
         >
           <div className="mb-1 flex items-center gap-2 font-bold">
             {lastCorrect ? <CheckCircle2 size={20} /> : <XCircle size={20} />}
-            {lastCorrect ? 'Muito bem!' : 'Não foi dessa vez'}
+            {lastCorrect ? t('lesson.correct') : t('lesson.incorrect')}
           </div>
           <p className="text-sm">{exercise.explanation}</p>
           <div className="mt-3 flex gap-2">
             {lastCorrect ? (
               <Button size="sm" onClick={goNext}>
-                Continuar
+                {t('lesson.continueButton')}
               </Button>
             ) : (
               <Button size="sm" variant="secondary" onClick={retry}>
-                Tentar novamente
+                {t('lesson.tryAgain')}
               </Button>
             )}
           </div>

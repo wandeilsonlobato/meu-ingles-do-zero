@@ -5,14 +5,21 @@ import clsx from 'clsx'
 import { useAppStore } from '../store/useAppStore'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
-import { DAILY_GOAL_LABELS } from '../lib/gamification'
 import { useInstallPrompt } from '../lib/useInstallPrompt'
-import type { DailyGoal } from '../types'
+import { useI18n } from '../lib/i18n'
+import type { DailyGoal, InterfaceLocale } from '../types'
 
 const GOALS: DailyGoal[] = ['casual', 'regular', 'serio', 'intenso']
+const GOAL_KEYS: Record<DailyGoal, string> = {
+  casual: 'common.goalCasual',
+  regular: 'common.goalRegular',
+  serio: 'common.goalSerious',
+  intenso: 'common.goalIntense',
+}
 
 export default function Settings() {
   const navigate = useNavigate()
+  const { t, locale, setLocale } = useI18n()
   const user = useAppStore((s) => s.currentUser())
   const updateDailyGoal = useAppStore((s) => s.updateDailyGoal)
   const logOut = useAppStore((s) => s.logOut)
@@ -23,7 +30,7 @@ export default function Settings() {
 
   return (
     <div className="mx-auto max-w-xl">
-      <h1 className="mb-6 text-2xl font-extrabold text-slate-800">Configurações</h1>
+      <h1 className="mb-6 text-2xl font-extrabold text-slate-800">{t('settings.title')}</h1>
 
       {!installed && (canInstall || isIos) && (
         <Card className="mb-5 flex items-center gap-4 border-brand-200 bg-brand-50 p-6">
@@ -31,26 +38,23 @@ export default function Settings() {
             <Smartphone size={22} />
           </div>
           <div className="flex-1">
-            <h2 className="font-bold text-slate-800">Instale o app no seu celular</h2>
+            <h2 className="font-bold text-slate-800">{t('settings.installTitle')}</h2>
             {canInstall ? (
-              <p className="text-sm text-slate-500">Acesso rápido com ícone na tela inicial, abrindo em tela cheia, sem a barra do navegador.</p>
+              <p className="text-sm text-slate-500">{t('settings.installDescAndroid')}</p>
             ) : (
-              <p className="text-sm text-slate-500">
-                No Safari, toque em <strong>Compartilhar</strong> e depois em{' '}
-                <strong>Adicionar à Tela de Início</strong>.
-              </p>
+              <p className="text-sm text-slate-500">{t('settings.installDescIos')}</p>
             )}
           </div>
           {canInstall && (
             <Button size="sm" icon={<Download size={16} />} onClick={promptInstall}>
-              Instalar
+              {t('settings.installButton')}
             </Button>
           )}
         </Card>
       )}
 
       <Card className="mb-5 p-6">
-        <h2 className="mb-3 font-bold text-slate-700">Meta diária</h2>
+        <h2 className="mb-3 font-bold text-slate-700">{t('settings.dailyGoal')}</h2>
         <div className="flex flex-col gap-2">
           {GOALS.map((g) => (
             <button
@@ -61,16 +65,16 @@ export default function Settings() {
                 user.dailyGoal === g ? 'border-brand-500 bg-brand-50' : 'border-slate-200 hover:border-brand-200',
               )}
             >
-              {DAILY_GOAL_LABELS[g]}
+              {t(GOAL_KEYS[g])}
             </button>
           ))}
         </div>
       </Card>
 
       <Card className="mb-5 p-6">
-        <h2 className="mb-3 font-bold text-slate-700">Notificações</h2>
+        <h2 className="mb-3 font-bold text-slate-700">{t('settings.notifications')}</h2>
         <label className="flex items-center justify-between">
-          <span className="text-sm text-slate-600">Lembrete para manter a sequência</span>
+          <span className="text-sm text-slate-600">{t('settings.notificationsLabel')}</span>
           <input
             type="checkbox"
             checked={notifications}
@@ -78,23 +82,35 @@ export default function Settings() {
             className="h-5 w-5 accent-brand-500"
           />
         </label>
-        <p className="mt-2 text-xs text-slate-400">
-          O envio de notificações de verdade (push ou e-mail) ainda não está implementado nesta versão.
-        </p>
+        <p className="mt-2 text-xs text-slate-400">{t('settings.notificationsHint')}</p>
       </Card>
 
       <Card className="mb-5 p-6">
-        <h2 className="mb-3 font-bold text-slate-700">Idioma da interface</h2>
-        <p className="text-sm text-slate-500">Português (Brasil) — único idioma disponível no momento.</p>
+        <h2 className="mb-3 font-bold text-slate-700">{t('settings.language')}</h2>
+        <p className="mb-3 text-sm text-slate-500">{t('settings.languageHint')}</p>
+        <div className="flex gap-2">
+          {(['pt', 'en'] as InterfaceLocale[]).map((l) => (
+            <button
+              key={l}
+              onClick={() => setLocale(l)}
+              className={clsx(
+                'rounded-xl border-2 px-4 py-2 text-sm font-bold transition-colors',
+                locale === l ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-slate-200 text-slate-600 hover:border-brand-200',
+              )}
+            >
+              {l === 'pt' ? 'Português' : 'English'}
+            </button>
+          ))}
+        </div>
       </Card>
 
       <Card className="mb-5 p-6">
-        <h2 className="mb-3 font-bold text-slate-700">Plano</h2>
-        <p className="text-sm text-slate-500">Você está no plano gratuito. Planos com vidas infinitas em breve.</p>
+        <h2 className="mb-3 font-bold text-slate-700">{t('settings.plan')}</h2>
+        <p className="text-sm text-slate-500">{t('settings.planHint')}</p>
       </Card>
 
       <Button variant="danger" fullWidth onClick={() => { logOut(); navigate('/') }}>
-        Sair da conta
+        {t('settings.logout')}
       </Button>
     </div>
   )

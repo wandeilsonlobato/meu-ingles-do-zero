@@ -9,6 +9,8 @@ import Dashboard from './pages/Dashboard'
 import Lesson from './pages/Lesson'
 import LessonResult from './pages/LessonResult'
 import Profile from './pages/Profile'
+import Friends from './pages/Friends'
+import PublicProfile from './pages/PublicProfile'
 import Ranking from './pages/Ranking'
 import Review from './pages/Review'
 import Store from './pages/Store'
@@ -17,6 +19,7 @@ import AdminOverview from './pages/admin/AdminOverview'
 import AdminContent from './pages/admin/AdminContent'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { useAppStore } from './store/useAppStore'
+import { I18nProvider, useT } from './lib/i18n'
 
 function OnboardingRoute() {
   const user = useAppStore((s) => s.currentUser())
@@ -48,6 +51,7 @@ function AdminRoute({ children }: { children: ReactNode }) {
 function AuthGate({ children }: { children: ReactNode }) {
   const authLoading = useAppStore((s) => s.authLoading)
   const initAuth = useAppStore((s) => s.initAuth)
+  const t = useT()
 
   useEffect(() => {
     initAuth()
@@ -57,7 +61,7 @@ function AuthGate({ children }: { children: ReactNode }) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-brand-50">
         <BookOpen className="animate-pulse text-brand-500" size={40} />
-        <p className="font-semibold text-brand-600">Carregando...</p>
+        <p className="font-semibold text-brand-600">{t('common.loading')}</p>
       </div>
     )
   }
@@ -68,8 +72,9 @@ function AuthGate({ children }: { children: ReactNode }) {
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthGate>
-        <Routes>
+      <I18nProvider>
+        <AuthGate>
+          <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/entrar" element={<Login />} />
           <Route path="/cadastro" element={<Signup />} />
@@ -104,6 +109,22 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/app/amigos"
+            element={
+              <ProtectedRoute>
+                <Friends />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/app/usuario/:userId"
+            element={
+              <ProtectedRoute>
+                <PublicProfile />
               </ProtectedRoute>
             }
           />
@@ -158,8 +179,9 @@ export default function App() {
           />
 
           <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </AuthGate>
+          </Routes>
+        </AuthGate>
+      </I18nProvider>
     </BrowserRouter>
   )
 }

@@ -9,10 +9,12 @@ import { COURSE } from '../data/course'
 import { dueReviewItems } from '../lib/review'
 import { findExerciseById } from '../lib/progress'
 import { todayLocalDate } from '../lib/auth'
+import { useT } from '../lib/i18n'
 import type { Exercise } from '../types'
 
 export default function Review() {
   const navigate = useNavigate()
+  const t = useT()
   const reviewQueue = useAppStore((s) => s.reviewQueue)
   const loadReviewQueue = useAppStore((s) => s.loadReviewQueue)
   const [loading, setLoading] = useState(true)
@@ -35,9 +37,9 @@ export default function Review() {
     return (
       <div className="mx-auto max-w-xl text-center">
         <div className="mb-3 text-6xl">🎉</div>
-        <h1 className="mb-1 text-2xl font-extrabold text-slate-800">Revisão concluída!</h1>
-        <p className="mb-6 text-slate-500">Você reforçou {dueExercises.length} ponto(s) que tinha errado antes.</p>
-        <Button onClick={() => navigate('/app')}>Voltar à trilha</Button>
+        <h1 className="mb-1 text-2xl font-extrabold text-slate-800">{t('review.completeTitle')}</h1>
+        <p className="mb-6 text-slate-500">{t('review.completeBody', { count: dueExercises.length })}</p>
+        <Button onClick={() => navigate('/app')}>{t('review.backToTrail')}</Button>
       </div>
     )
   }
@@ -47,14 +49,12 @@ export default function Review() {
       <div className="mx-auto max-w-xl text-center">
         <Card className="p-8">
           <PartyPopper className="mx-auto mb-3 text-glow-500" size={40} />
-          <h1 className="mb-1 text-xl font-extrabold text-slate-800">Nada para revisar hoje!</h1>
+          <h1 className="mb-1 text-xl font-extrabold text-slate-800">{t('review.nothingTitle')}</h1>
           <p className="mb-6 text-slate-500">
-            {reviewQueue.length > 0
-              ? 'Seus próximos itens de revisão ainda não venceram. Volte outro dia.'
-              : 'Assim que você errar um exercício, ele entra aqui para você reforçar depois — com intervalos crescentes, como um sistema de repetição espaçada.'}
+            {reviewQueue.length > 0 ? t('review.nothingDue') : t('review.nothingEver')}
           </p>
           <Button variant="secondary" onClick={() => navigate('/app')}>
-            Voltar à trilha
+            {t('review.backToTrail')}
           </Button>
         </Card>
       </div>
@@ -67,13 +67,13 @@ export default function Review() {
         <button
           onClick={() => navigate('/app')}
           className="flex items-center gap-1 text-slate-400 hover:text-slate-600"
-          aria-label="Sair da revisão"
+          aria-label={t('lesson.exitLesson')}
         >
           <X size={20} />
         </button>
         <span className="flex items-center gap-1 text-sm font-semibold text-slate-500">
           <RotateCcw size={16} />
-          Revisão de erros
+          {t('review.title')}
         </span>
       </div>
       <ReviewRunner exercises={dueExercises} onDone={() => setDone(true)} />

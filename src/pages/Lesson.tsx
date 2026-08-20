@@ -7,10 +7,12 @@ import { ExerciseRunner } from '../components/exercises/ExerciseRunner'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { useAppStore } from '../store/useAppStore'
+import { useT } from '../lib/i18n'
 
 export default function Lesson() {
   const { lessonId } = useParams<{ lessonId: string }>()
   const navigate = useNavigate()
+  const t = useT()
   const submitLessonAttempt = useAppStore((s) => s.submitLessonAttempt)
   const [started, setStarted] = useState(false)
 
@@ -19,8 +21,8 @@ export default function Lesson() {
   if (!lesson) {
     return (
       <div className="text-center">
-        <p className="mb-4 text-slate-500">Lição não encontrada.</p>
-        <Button onClick={() => navigate('/app')}>Voltar à trilha</Button>
+        <p className="mb-4 text-slate-500">{t('lesson.notFound')}</p>
+        <Button onClick={() => navigate('/app')}>{t('lesson.backToTrail')}</Button>
       </div>
     )
   }
@@ -37,12 +39,12 @@ export default function Lesson() {
         <button
           onClick={() => navigate('/app')}
           className="mb-4 flex items-center gap-1 text-slate-400 hover:text-slate-600"
-          aria-label="Sair da lição"
+          aria-label={t('lesson.exitLesson')}
         >
           <X size={20} />
         </button>
         <Card className="p-6">
-          <p className="mb-1 text-xs font-bold uppercase tracking-wide text-brand-500">Explicação</p>
+          <p className="mb-1 text-xs font-bold uppercase tracking-wide text-brand-500">{t('lesson.theoryLabel')}</p>
           <h1 className="mb-4 text-2xl font-extrabold text-slate-800">{lesson.theory.title}</h1>
           <p className="mb-5 leading-relaxed text-slate-600">{lesson.theory.body}</p>
           <div className="mb-6 flex flex-col gap-2">
@@ -54,7 +56,7 @@ export default function Lesson() {
             ))}
           </div>
           <Button fullWidth onClick={() => setStarted(true)}>
-            Começar exercícios
+            {t('lesson.startExercises')}
           </Button>
         </Card>
       </div>
@@ -66,7 +68,7 @@ export default function Lesson() {
       <button
         onClick={() => navigate('/app')}
         className="mb-4 flex items-center gap-1 text-slate-400 hover:text-slate-600"
-        aria-label="Sair da lição"
+        aria-label={t('lesson.exitLesson')}
       >
         <X size={20} />
       </button>

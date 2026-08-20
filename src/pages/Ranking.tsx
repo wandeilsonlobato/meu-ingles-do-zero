@@ -5,6 +5,7 @@ import { useAppStore } from '../store/useAppStore'
 import { Card } from '../components/ui/Card'
 import { buildWeeklyRanking, LEAGUE_ORDER, promotionZone } from '../lib/ranking'
 import { fetchLeaderboard } from '../lib/supabaseSync'
+import { useT } from '../lib/i18n'
 import type { LeaderboardRow } from '../types'
 
 const LEAGUE_COLORS: Record<string, string> = {
@@ -17,6 +18,7 @@ const LEAGUE_COLORS: Record<string, string> = {
 const MIN_PLAYERS_FOR_PROMOTION = 5
 
 export default function Ranking() {
+  const t = useT()
   const user = useAppStore((s) => s.currentUser())
   const [rows, setRows] = useState<LeaderboardRow[] | null>(null)
 
@@ -35,13 +37,11 @@ export default function Ranking() {
     <div className="mx-auto max-w-xl">
       <div className="mb-6 text-center">
         <span className={clsx('rounded-full px-4 py-1 text-sm font-bold', LEAGUE_COLORS[user.league])}>
-          Liga {user.league}
+          {t('ranking.league', { league: user.league })}
         </span>
-        <h1 className="mt-2 text-2xl font-extrabold text-slate-800">Ranking semanal</h1>
+        <h1 className="mt-2 text-2xl font-extrabold text-slate-800">{t('ranking.weeklyRanking')}</h1>
         <p className="text-sm text-slate-500">
-          {showZones
-            ? `Os ${Math.ceil(ranking.length * 0.25)} primeiros sobem de liga, os ${Math.ceil(ranking.length * 0.25)} últimos descem.`
-            : 'Só entre alunos de verdade — quanto mais gente estudar, mais movimentada fica a liga.'}
+          {showZones ? t('ranking.zonesHint', { count: Math.ceil(ranking.length * 0.25) }) : t('ranking.realOnlyHint')}
         </p>
       </div>
 
@@ -59,7 +59,7 @@ export default function Ranking() {
         ))}
       </div>
 
-      {loading && <Card className="p-8 text-center text-slate-400">Carregando ranking...</Card>}
+      {loading && <Card className="p-8 text-center text-slate-400">{t('ranking.loading')}</Card>}
 
       {!loading && (
         <Card className="divide-y divide-slate-100 overflow-hidden">
@@ -73,7 +73,7 @@ export default function Ranking() {
                 <span className="w-6 text-center font-bold text-slate-400">{i + 1}</span>
                 <span className="text-2xl">{entry.avatarEmoji}</span>
                 <span className={clsx('flex-1 font-semibold', entry.isCurrentUser ? 'text-brand-700' : 'text-slate-700')}>
-                  {entry.name} {entry.isCurrentUser && '(você)'}
+                  {entry.name} {entry.isCurrentUser && t('ranking.you')}
                 </span>
                 <span className="font-bold text-slate-600">{entry.xpThisWeek} XP</span>
                 {showZones && zone === 'promotion' && <ArrowUp size={18} className="text-progress-500" />}
@@ -88,7 +88,7 @@ export default function Ranking() {
       {!loading && ranking.length < MIN_PLAYERS_FOR_PROMOTION && (
         <div className="mt-4 flex items-center justify-center gap-2 text-center text-xs text-slate-400">
           <Users size={14} />
-          Promoção e rebaixamento começam a valer a partir de {MIN_PLAYERS_FOR_PROMOTION} alunos na liga. Convide amigos!
+          {t('ranking.smallLeagueHint', { min: MIN_PLAYERS_FOR_PROMOTION })}
         </div>
       )}
     </div>

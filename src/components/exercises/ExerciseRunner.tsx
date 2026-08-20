@@ -6,6 +6,7 @@ import { Button } from '../ui/Button'
 import { ProgressBar } from '../ui/ProgressBar'
 import { HeartsDisplay } from '../ui/StatusBadges'
 import { useAppStore } from '../../store/useAppStore'
+import { useT } from '../../lib/i18n'
 import { MultipleChoiceExercise } from './MultipleChoiceExercise'
 import { FillBlankExercise } from './FillBlankExercise'
 import { SentenceOrderExercise } from './SentenceOrderExercise'
@@ -35,6 +36,7 @@ interface ExerciseRunnerProps {
 }
 
 export function ExerciseRunner({ lesson, onComplete, onOutOfHearts }: ExerciseRunnerProps) {
+  const t = useT()
   const user = useAppStore((s) => s.currentUser())
   const loseHeartAction = useAppStore((s) => s.loseHeartAction)
   const recordMistake = useAppStore((s) => s.recordMistake)
@@ -108,17 +110,17 @@ export function ExerciseRunner({ lesson, onComplete, onOutOfHearts }: ExerciseRu
         >
           <div className="mb-1 flex items-center gap-2 font-bold">
             {lastCorrect ? <CheckCircle2 size={20} /> : <XCircle size={20} />}
-            {lastCorrect ? 'Muito bem!' : 'Não foi dessa vez'}
+            {lastCorrect ? t('lesson.correct') : t('lesson.incorrect')}
           </div>
           <p className="text-sm">{exercise.explanation}</p>
           <div className="mt-3 flex gap-2">
             {lastCorrect ? (
               <Button size="sm" onClick={goNext}>
-                Continuar
+                {t('lesson.continueButton')}
               </Button>
             ) : (
               <Button size="sm" variant="secondary" onClick={retry}>
-                Tentar novamente
+                {t('lesson.tryAgain')}
               </Button>
             )}
           </div>
@@ -127,10 +129,10 @@ export function ExerciseRunner({ lesson, onComplete, onOutOfHearts }: ExerciseRu
 
       {heartsNowZero && (
         <div className="mt-4 rounded-2xl bg-heart-500/10 p-5 text-center text-heart-700">
-          <p className="mb-1 font-extrabold text-lg">Você ficou sem corações 💔</p>
-          <p className="mb-4 text-sm">Seus corações se recuperam com o tempo. Volte mais tarde para continuar de onde parou.</p>
+          <p className="mb-1 font-extrabold text-lg">{t('lesson.outOfHeartsTitle')}</p>
+          <p className="mb-4 text-sm">{t('lesson.outOfHeartsBody')}</p>
           <Button variant="danger" size="sm" onClick={onOutOfHearts}>
-            Voltar à trilha
+            {t('lesson.backToTrail')}
           </Button>
         </div>
       )}

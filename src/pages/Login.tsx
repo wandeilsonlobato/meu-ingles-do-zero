@@ -4,9 +4,11 @@ import { BookOpen } from 'lucide-react'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { isSupabaseConfigured, useAppStore } from '../store/useAppStore'
+import { useT } from '../lib/i18n'
 
 export default function Login() {
   const navigate = useNavigate()
+  const t = useT()
   const logIn = useAppStore((s) => s.logIn)
   const logInWithGoogle = useAppStore((s) => s.logInWithGoogle)
   const [email, setEmail] = useState('')
@@ -44,22 +46,19 @@ export default function Login() {
       <Card className="w-full max-w-md p-8">
         <Link to="/" className="mb-6 flex items-center gap-2 font-extrabold text-brand-700">
           <BookOpen size={22} />
-          Meu Inglês do Zero
+          {t('nav.brand')}
         </Link>
-        <h1 className="mb-1 text-2xl font-extrabold text-slate-800">Bem-vindo de volta!</h1>
-        <p className="mb-6 text-slate-500">Continue de onde você parou.</p>
+        <h1 className="mb-1 text-2xl font-extrabold text-slate-800">{t('auth.loginTitle')}</h1>
+        <p className="mb-6 text-slate-500">{t('auth.loginSubtitle')}</p>
 
         {!isSupabaseConfigured && (
-          <p className="mb-4 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-700">
-            Backend não configurado ainda. Defina <code>VITE_SUPABASE_URL</code> e{' '}
-            <code>VITE_SUPABASE_ANON_KEY</code> em um arquivo <code>.env.local</code> para habilitar login.
-          </p>
+          <p className="mb-4 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-700">{t('auth.backendWarningLogin')}</p>
         )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
             <label htmlFor="email" className="mb-1 block text-sm font-semibold text-slate-600">
-              E-mail
+              {t('auth.emailLabel')}
             </label>
             <input
               id="email"
@@ -72,7 +71,7 @@ export default function Login() {
           </div>
           <div>
             <label htmlFor="password" className="mb-1 block text-sm font-semibold text-slate-600">
-              Senha
+              {t('auth.passwordLabel')}
             </label>
             <input
               id="password"
@@ -85,24 +84,24 @@ export default function Login() {
           </div>
           {error && <p className="text-sm font-semibold text-heart-600">{error}</p>}
           <Button type="submit" fullWidth disabled={loading || !isSupabaseConfigured}>
-            {loading ? 'Entrando...' : 'Entrar'}
+            {loading ? t('auth.loginButtonLoading') : t('auth.loginButton')}
           </Button>
         </form>
 
         <div className="my-5 flex items-center gap-3 text-xs font-semibold text-slate-400">
           <div className="h-px flex-1 bg-slate-200" />
-          OU
+          {t('auth.or')}
           <div className="h-px flex-1 bg-slate-200" />
         </div>
 
         <Button variant="secondary" fullWidth onClick={handleGoogle} disabled={googleLoading || !isSupabaseConfigured}>
-          {googleLoading ? 'Redirecionando...' : 'Entrar com Google'}
+          {googleLoading ? t('auth.googleRedirecting') : t('auth.googleLogin')}
         </Button>
 
         <p className="mt-6 text-center text-sm text-slate-500">
-          Ainda não tem conta?{' '}
+          {t('auth.noAccount')}{' '}
           <Link to="/cadastro" className="font-bold text-brand-600 hover:underline">
-            Cadastre-se
+            {t('auth.signupLink')}
           </Link>
         </p>
       </Card>

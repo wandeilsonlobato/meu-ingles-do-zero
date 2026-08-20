@@ -4,9 +4,11 @@ import { BookOpen, MailCheck } from 'lucide-react'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { isSupabaseConfigured, useAppStore } from '../store/useAppStore'
+import { useT } from '../lib/i18n'
 
 export default function Signup() {
   const navigate = useNavigate()
+  const t = useT()
   const signUp = useAppStore((s) => s.signUp)
   const logInWithGoogle = useAppStore((s) => s.logInWithGoogle)
   const [name, setName] = useState('')
@@ -49,13 +51,10 @@ export default function Signup() {
       <div className="flex min-h-screen items-center justify-center bg-brand-50 px-4 py-10">
         <Card className="w-full max-w-md p-8 text-center">
           <MailCheck className="mx-auto mb-3 text-brand-500" size={40} />
-          <h1 className="mb-2 text-2xl font-extrabold text-slate-800">Confirme seu e-mail</h1>
-          <p className="text-slate-500">
-            Enviamos um link de confirmação para <strong>{email}</strong>. Clique nele para ativar sua conta e depois
-            volte aqui para entrar.
-          </p>
+          <h1 className="mb-2 text-2xl font-extrabold text-slate-800">{t('auth.confirmEmailTitle')}</h1>
+          <p className="text-slate-500">{t('auth.confirmEmailBody', { email })}</p>
           <Link to="/entrar" className="mt-6 inline-block font-bold text-brand-600 hover:underline">
-            Ir para a tela de entrar
+            {t('auth.confirmEmailLink')}
           </Link>
         </Card>
       </div>
@@ -67,22 +66,19 @@ export default function Signup() {
       <Card className="w-full max-w-md p-8">
         <Link to="/" className="mb-6 flex items-center gap-2 font-extrabold text-brand-700">
           <BookOpen size={22} />
-          Meu Inglês do Zero
+          {t('nav.brand')}
         </Link>
-        <h1 className="mb-1 text-2xl font-extrabold text-slate-800">Crie sua conta grátis</h1>
-        <p className="mb-6 text-slate-500">Comece a aprender inglês do zero hoje mesmo.</p>
+        <h1 className="mb-1 text-2xl font-extrabold text-slate-800">{t('auth.signupTitle')}</h1>
+        <p className="mb-6 text-slate-500">{t('auth.signupSubtitle')}</p>
 
         {!isSupabaseConfigured && (
-          <p className="mb-4 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-700">
-            Backend não configurado ainda. Defina <code>VITE_SUPABASE_URL</code> e{' '}
-            <code>VITE_SUPABASE_ANON_KEY</code> em um arquivo <code>.env.local</code> para habilitar cadastro.
-          </p>
+          <p className="mb-4 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-700">{t('auth.backendWarningSignup')}</p>
         )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
             <label htmlFor="name" className="mb-1 block text-sm font-semibold text-slate-600">
-              Nome
+              {t('auth.nameLabel')}
             </label>
             <input
               id="name"
@@ -95,7 +91,7 @@ export default function Signup() {
           </div>
           <div>
             <label htmlFor="email" className="mb-1 block text-sm font-semibold text-slate-600">
-              E-mail
+              {t('auth.emailLabel')}
             </label>
             <input
               id="email"
@@ -108,7 +104,7 @@ export default function Signup() {
           </div>
           <div>
             <label htmlFor="password" className="mb-1 block text-sm font-semibold text-slate-600">
-              Senha
+              {t('auth.passwordLabel')}
             </label>
             <input
               id="password"
@@ -119,28 +115,28 @@ export default function Signup() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 outline-none focus:border-brand-400"
             />
-            <p className="mt-1 text-xs text-slate-400">Mínimo de 6 caracteres.</p>
+            <p className="mt-1 text-xs text-slate-400">{t('auth.passwordHint')}</p>
           </div>
           {error && <p className="text-sm font-semibold text-heart-600">{error}</p>}
           <Button type="submit" fullWidth disabled={loading || !isSupabaseConfigured}>
-            {loading ? 'Criando conta...' : 'Criar conta'}
+            {loading ? t('auth.signupButtonLoading') : t('auth.signupButton')}
           </Button>
         </form>
 
         <div className="my-5 flex items-center gap-3 text-xs font-semibold text-slate-400">
           <div className="h-px flex-1 bg-slate-200" />
-          OU
+          {t('auth.or')}
           <div className="h-px flex-1 bg-slate-200" />
         </div>
 
         <Button variant="secondary" fullWidth onClick={handleGoogle} disabled={googleLoading || !isSupabaseConfigured}>
-          {googleLoading ? 'Redirecionando...' : 'Continuar com Google'}
+          {googleLoading ? t('auth.googleRedirecting') : t('auth.googleSignup')}
         </Button>
 
         <p className="mt-6 text-center text-sm text-slate-500">
-          Já tem conta?{' '}
+          {t('auth.haveAccount')}{' '}
           <Link to="/entrar" className="font-bold text-brand-600 hover:underline">
-            Entrar
+            {t('auth.loginLink')}
           </Link>
         </p>
       </Card>
