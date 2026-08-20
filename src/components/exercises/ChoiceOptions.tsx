@@ -39,10 +39,10 @@ export function ChoiceOptions({ options, correctOptionId, onCheck }: ChoiceOptio
               onClick={() => setSelected(opt.id)}
               className={clsx(
                 'flex items-center gap-3 rounded-2xl border-2 px-4 py-3 text-left font-semibold transition-colors',
-                !checked && isSelected && 'border-brand-500 bg-brand-50',
-                !checked && !isSelected && 'border-slate-200 bg-white hover:border-brand-200',
-                showState && isCorrectOpt && 'border-progress-500 bg-progress-50 text-progress-700',
-                showState && isSelected && !isCorrectOpt && 'border-heart-500 bg-heart-500/10 text-heart-600',
+                !checked && isSelected && 'border-brand-500 bg-brand-50 dark:bg-brand-900/30',
+                !checked && !isSelected && 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-brand-200',
+                showState && isCorrectOpt && 'border-progress-500 bg-progress-50 dark:bg-progress-900/30 text-progress-700 dark:text-progress-300',
+                showState && isSelected && !isCorrectOpt && 'border-heart-500 bg-heart-500/10 dark:bg-heart-500/20 text-heart-600 dark:text-heart-400',
               )}
             >
               {opt.imageEmoji && <span className="text-2xl">{opt.imageEmoji}</span>}

@@ -42,8 +42,8 @@ export function SpeakingExercise({ exercise, onAnswer }: ExerciseComponentProps)
 
   return (
     <div>
-      <p className="mb-2 text-xl font-bold text-slate-800">{exercise.prompt}</p>
-      <p className="mb-5 text-2xl font-extrabold text-brand-700">{exercise.audioText}</p>
+      <p className="mb-2 text-xl font-bold text-slate-800 dark:text-slate-100">{exercise.prompt}</p>
+      <p className="mb-5 text-2xl font-extrabold text-brand-700 dark:text-brand-300">{exercise.audioText}</p>
 
       <button
         type="button"
@@ -69,21 +69,21 @@ export function SpeakingExercise({ exercise, onAnswer }: ExerciseComponentProps)
           <Mic size={32} />
         </button>
       ) : (
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Seu navegador não suporta reconhecimento de voz. Você pode marcar como praticado após repetir em voz alta.
         </p>
       )}
 
-      {error && <p className="mt-3 text-sm text-heart-600">{error}</p>}
+      {error && <p className="mt-3 text-sm text-heart-600 dark:text-heart-400">{error}</p>}
 
       {transcript && (
-        <p className="mt-4 text-slate-600">
+        <p className="mt-4 text-slate-600 dark:text-slate-300">
           Você disse: <span className="font-semibold">"{transcript}"</span>
         </p>
       )}
 
       {score !== null && (
-        <p className={clsx('mt-2 font-bold', score >= PASS_THRESHOLD ? 'text-progress-700' : 'text-heart-600')}>
+        <p className={clsx('mt-2 font-bold', score >= PASS_THRESHOLD ? 'text-progress-700 dark:text-progress-300' : 'text-heart-600 dark:text-heart-400')}>
           Pontuação de pronúncia: {score}%
         </p>
       )}

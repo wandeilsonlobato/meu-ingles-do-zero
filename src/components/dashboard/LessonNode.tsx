@@ -37,13 +37,13 @@ export function LessonNode({
           status === 'completed' && 'border-progress-600 bg-gradient-to-b from-progress-400 to-progress-600 text-white',
           status === 'available' && 'border-brand-600 bg-gradient-to-b from-brand-400 to-brand-600 text-white animate-pop',
           status === 'in_progress' && 'border-glow-500 bg-gradient-to-b from-glow-300 to-glow-500 text-white',
-          locked && 'border-slate-300 bg-gradient-to-b from-slate-100 to-slate-200 text-slate-400',
+          locked && 'border-slate-300 dark:border-slate-600 bg-gradient-to-b from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 text-slate-400 dark:text-slate-500',
         )}
         aria-label={lesson.title}
       >
         {locked ? <Lock size={20} /> : nodeIcon(lesson, status)}
       </button>
-      <span className="max-w-20 text-center text-xs font-semibold text-slate-500">{lesson.title}</span>
+      <span className="max-w-20 text-center text-xs font-semibold text-slate-500 dark:text-slate-400">{lesson.title}</span>
     </div>
   )
 }

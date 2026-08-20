@@ -21,7 +21,7 @@ export default function Lesson() {
   if (!lesson) {
     return (
       <div className="text-center">
-        <p className="mb-4 text-slate-500">{t('lesson.notFound')}</p>
+        <p className="mb-4 text-slate-500 dark:text-slate-400">{t('lesson.notFound')}</p>
         <Button onClick={() => navigate('/app')}>{t('lesson.backToTrail')}</Button>
       </div>
     )
@@ -38,20 +38,20 @@ export default function Lesson() {
       <div className="mx-auto max-w-xl">
         <button
           onClick={() => navigate('/app')}
-          className="mb-4 flex items-center gap-1 text-slate-400 hover:text-slate-600"
+          className="mb-4 flex items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-slate-600"
           aria-label={t('lesson.exitLesson')}
         >
           <X size={20} />
         </button>
         <Card className="p-6">
           <p className="mb-1 text-xs font-bold uppercase tracking-wide text-brand-500">{t('lesson.theoryLabel')}</p>
-          <h1 className="mb-4 text-2xl font-extrabold text-slate-800">{lesson.theory.title}</h1>
-          <p className="mb-5 leading-relaxed text-slate-600">{lesson.theory.body}</p>
+          <h1 className="mb-4 text-2xl font-extrabold text-slate-800 dark:text-slate-100">{lesson.theory.title}</h1>
+          <p className="mb-5 leading-relaxed text-slate-600 dark:text-slate-300">{lesson.theory.body}</p>
           <div className="mb-6 flex flex-col gap-2">
             {lesson.theory.examples.map((ex) => (
-              <div key={ex.en} className="rounded-xl bg-brand-50 px-4 py-3">
-                <p className="font-bold text-brand-800">{ex.en}</p>
-                <p className="text-sm text-slate-500">{ex.pt}</p>
+              <div key={ex.en} className="rounded-xl bg-brand-50 dark:bg-brand-900/30 px-4 py-3">
+                <p className="font-bold text-brand-800 dark:text-brand-300">{ex.en}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{ex.pt}</p>
               </div>
             ))}
           </div>
@@ -67,7 +67,7 @@ export default function Lesson() {
     <div>
       <button
         onClick={() => navigate('/app')}
-        className="mb-4 flex items-center gap-1 text-slate-400 hover:text-slate-600"
+        className="mb-4 flex items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-slate-600"
         aria-label={t('lesson.exitLesson')}
       >
         <X size={20} />

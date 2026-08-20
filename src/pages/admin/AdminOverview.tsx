@@ -28,7 +28,7 @@ export default function AdminOverview() {
 
       <Card className="overflow-x-auto p-0">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-100 text-xs uppercase text-slate-500">
+          <thead className="bg-slate-100 dark:bg-slate-800 text-xs uppercase text-slate-500 dark:text-slate-400">
             <tr>
               <th className="px-4 py-3">Aluno</th>
               <th className="px-4 py-3">XP total</th>
@@ -41,21 +41,21 @@ export default function AdminOverview() {
           <tbody>
             {students === null && (
               <tr>
-                <td colSpan={6} className="px-4 py-6 text-center text-slate-400">
+                <td colSpan={6} className="px-4 py-6 text-center text-slate-400 dark:text-slate-500">
                   Carregando...
                 </td>
               </tr>
             )}
             {students !== null && list.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-6 text-center text-slate-400">
+                <td colSpan={6} className="px-4 py-6 text-center text-slate-400 dark:text-slate-500">
                   Nenhum aluno cadastrado ainda.
                 </td>
               </tr>
             )}
             {list.map((u) => (
-              <tr key={u.id} className="border-t border-slate-100">
-                <td className="px-4 py-3 font-semibold text-slate-700">
+              <tr key={u.id} className="border-t border-slate-100 dark:border-slate-800">
+                <td className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-200">
                   {u.avatarEmoji} {u.name}
                 </td>
                 <td className="px-4 py-3">{u.xpTotal}</td>
@@ -64,7 +64,7 @@ export default function AdminOverview() {
                 <td className="px-4 py-3">
                   {u.completedLessons} / {totalLessons}
                 </td>
-                <td className="px-4 py-3 text-slate-400">{new Date(u.createdAt).toLocaleDateString('pt-BR')}</td>
+                <td className="px-4 py-3 text-slate-400 dark:text-slate-500">{new Date(u.createdAt).toLocaleDateString('pt-BR')}</td>
               </tr>
             ))}
           </tbody>
@@ -77,8 +77,8 @@ export default function AdminOverview() {
 function Stat({ label, value }: { label: string; value: number }) {
   return (
     <Card className="p-4 text-center">
-      <p className="text-2xl font-extrabold text-brand-700">{value}</p>
-      <p className="text-xs font-semibold text-slate-400">{label}</p>
+      <p className="text-2xl font-extrabold text-brand-700 dark:text-brand-300">{value}</p>
+      <p className="text-xs font-semibold text-slate-400 dark:text-slate-500">{label}</p>
     </Card>
   )
 }

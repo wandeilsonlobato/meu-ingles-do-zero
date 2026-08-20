@@ -1,12 +1,13 @@
 import { type ReactNode, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
-import { BookOpen, Home, RotateCcw, Settings, ShoppingBag, Trophy, User as UserIcon } from 'lucide-react'
+import { BookOpen, Home, Moon, RotateCcw, Settings, ShoppingBag, Sun, Trophy, User as UserIcon } from 'lucide-react'
 import clsx from 'clsx'
 import { useAppStore } from '../../store/useAppStore'
 import { HeartsDisplay, StreakBadge, XpBadge } from '../ui/StatusBadges'
 import { isStreakAtRisk } from '../../lib/gamification'
 import { todayLocalDate } from '../../lib/auth'
 import { useT } from '../../lib/i18n'
+import { useTheme } from '../../lib/theme'
 
 const NAV_ITEMS = [
   { to: '/app', key: 'nav.trail', icon: Home, end: true },
@@ -21,6 +22,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const user = useAppStore((s) => s.currentUser())
   const tickHeartRefill = useAppStore((s) => s.tickHeartRefill)
   const t = useT()
+  const { isDark, setTheme } = useTheme()
 
   useEffect(() => {
     tickHeartRefill()
@@ -33,10 +35,10 @@ export function AppShell({ children }: { children: ReactNode }) {
   const atRisk = isStreakAtRisk(user.lastStudyDate, todayLocalDate())
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800">
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur px-4 py-3">
+    <div className="min-h-screen bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100">
+      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur px-4 py-3 dark:border-slate-800 dark:bg-slate-900/90">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3">
-          <div className="flex items-center gap-2 font-display font-extrabold text-brand-600">
+          <div className="flex items-center gap-2 font-display font-extrabold text-brand-600 dark:text-brand-400">
             <BookOpen size={22} />
             <span className="hidden sm:inline">{t('nav.brand')}</span>
           </div>
@@ -44,7 +46,15 @@ export function AppShell({ children }: { children: ReactNode }) {
             <StreakBadge days={user.streakCurrent} atRisk={atRisk} />
             <XpBadge xp={user.xpTotal} />
             <HeartsDisplay current={user.livesCurrent} max={user.livesMax} size={18} />
-            <span className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full bg-brand-100 text-xl" title={user.name}>
+            <button
+              type="button"
+              onClick={() => setTheme(isDark ? 'light' : 'dark')}
+              className="flex h-7 w-7 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+              aria-label={t('settings.theme')}
+            >
+              {isDark ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+            <span className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full bg-brand-100 text-xl dark:bg-brand-900/50" title={user.name}>
               {user.avatarPhotoUrl ? (
                 <img src={user.avatarPhotoUrl} alt="" className="h-full w-full object-cover" />
               ) : (
@@ -57,7 +67,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       <main className="mx-auto max-w-5xl px-4 pb-24 pt-6 sm:pb-10">{children}</main>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-20 border-t border-slate-200 bg-white sm:sticky sm:top-16 sm:mx-auto sm:mt-6 sm:max-w-5xl sm:rounded-2xl sm:border sm:px-2 sm:py-2">
+      <nav className="fixed bottom-0 left-0 right-0 z-20 border-t border-slate-200 bg-white sm:sticky sm:top-16 sm:mx-auto sm:mt-6 sm:max-w-5xl sm:rounded-2xl sm:border sm:px-2 sm:py-2 dark:border-slate-800 dark:bg-slate-900">
         <div className="mx-auto flex max-w-5xl justify-around px-2 py-2 sm:justify-start sm:gap-2">
           {NAV_ITEMS.map(({ to, key, icon: Icon, end }) => (
             <NavLink
@@ -67,7 +77,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               className={({ isActive }) =>
                 clsx(
                   'flex flex-col items-center gap-0.5 rounded-xl px-3 py-1.5 text-xs font-semibold sm:flex-row sm:gap-2 sm:text-sm',
-                  isActive ? 'text-brand-600 bg-brand-50' : 'text-slate-500 hover:text-brand-500',
+                  isActive ? 'text-brand-600 bg-brand-50 dark:text-brand-400 dark:bg-brand-900/40' : 'text-slate-500 hover:text-brand-500 dark:text-slate-400 dark:hover:text-brand-400',
                 )
               }
             >

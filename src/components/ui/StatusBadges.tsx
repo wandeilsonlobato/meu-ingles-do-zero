@@ -8,7 +8,7 @@ export function HeartsDisplay({ current, max, size = 20 }: { current: number; ma
         <Heart
           key={i}
           size={size}
-          className={i < current ? 'fill-heart-500 text-heart-500' : 'fill-slate-200 text-slate-200'}
+          className={i < current ? 'fill-heart-500 text-heart-500' : 'fill-slate-200 text-slate-200 dark:fill-slate-700 dark:text-slate-700'}
         />
       ))}
     </div>
@@ -17,7 +17,7 @@ export function HeartsDisplay({ current, max, size = 20 }: { current: number; ma
 
 export function XpBadge({ xp }: { xp: number }) {
   return (
-    <div className="flex items-center gap-1 rounded-full bg-glow-100 px-3 py-1 text-glow-700 font-bold text-sm">
+    <div className="flex items-center gap-1 rounded-full bg-glow-100 px-3 py-1 text-glow-700 font-bold text-sm dark:bg-glow-900/40 dark:text-glow-300">
       <Gem size={16} className="fill-glow-400 text-glow-500" />
       {xp} XP
     </div>
@@ -29,7 +29,7 @@ export function StreakBadge({ days, atRisk }: { days: number; atRisk?: boolean }
     <div
       className={clsx(
         'flex items-center gap-1 rounded-full px-3 py-1 font-bold text-sm',
-        atRisk ? 'bg-heart-500/10 text-heart-600' : 'bg-glow-100 text-glow-700',
+        atRisk ? 'bg-heart-500/10 text-heart-600 dark:text-heart-400' : 'bg-glow-100 text-glow-700 dark:bg-glow-900/40 dark:text-glow-300',
       )}
     >
       <Flame size={16} className={atRisk ? 'text-heart-500' : 'fill-glow-400 text-glow-500'} />
@@ -40,7 +40,7 @@ export function StreakBadge({ days, atRisk }: { days: number; atRisk?: boolean }
 
 export function CoinsBadge({ coins }: { coins: number }) {
   return (
-    <div className="flex items-center gap-1 rounded-full bg-brand-50 px-3 py-1 text-brand-700 font-bold text-sm">
+    <div className="flex items-center gap-1 rounded-full bg-brand-50 px-3 py-1 text-brand-700 font-bold text-sm dark:bg-brand-900/40 dark:text-brand-300">
       🪙 {coins}
     </div>
   )

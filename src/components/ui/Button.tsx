@@ -12,10 +12,10 @@ const VARIANT_CLASSES: Record<NonNullable<ButtonProps['variant']>, string> = {
   primary:
     'bg-brand-500 text-white border-b-4 border-brand-700 hover:bg-brand-400 active:border-b-0 active:translate-y-1',
   secondary:
-    'bg-white text-brand-600 border-2 border-brand-200 hover:bg-brand-50',
+    'bg-white text-brand-600 border-2 border-brand-200 hover:bg-brand-50 dark:bg-slate-800 dark:text-brand-400 dark:border-brand-800 dark:hover:bg-slate-700',
   success:
     'bg-progress-500 text-white border-b-4 border-progress-700 hover:bg-progress-400 active:border-b-0 active:translate-y-1',
-  ghost: 'bg-transparent text-slate-600 hover:bg-slate-100',
+  ghost: 'bg-transparent text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800',
   danger:
     'bg-heart-500 text-white border-b-4 border-heart-600 hover:opacity-90 active:border-b-0 active:translate-y-1',
 }

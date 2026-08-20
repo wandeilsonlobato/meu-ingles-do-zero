@@ -32,21 +32,21 @@ export default function LessonResult() {
   return (
     <div className="mx-auto max-w-xl text-center">
       <div className="mb-3 text-6xl">{accuracyPct === 100 ? '🏆' : accuracyPct >= 60 ? '🎉' : '💪'}</div>
-      <h1 className="mb-1 text-2xl font-extrabold text-slate-800">
+      <h1 className="mb-1 text-2xl font-extrabold text-slate-800 dark:text-slate-100">
         {accuracyPct === 100 ? t('lessonResult.perfect') : t('lessonResult.complete')}
       </h1>
-      <p className="mb-6 text-slate-500">
+      <p className="mb-6 text-slate-500 dark:text-slate-400">
         {t('lessonResult.scoreLine', { correct: state.correctCount, total: state.totalCount, pct: accuracyPct })}
       </p>
 
-      <Card className="mb-6 flex items-center justify-center gap-3 p-6">
+      <Card elevation="raised" className="mb-6 flex items-center justify-center gap-3 p-6">
         <Gem className="text-glow-500 fill-glow-400" size={28} />
-        <span className="text-2xl font-extrabold text-glow-700">+{state.xpEarned} XP</span>
+        <span className="text-2xl font-extrabold text-glow-700 dark:text-glow-300">+{state.xpEarned} XP</span>
       </Card>
 
       {state.newAchievements.length > 0 && (
         <Card className="mb-6 p-6">
-          <p className="mb-3 flex items-center justify-center gap-2 font-bold text-slate-700">
+          <p className="mb-3 flex items-center justify-center gap-2 font-bold text-slate-700 dark:text-slate-200">
             <PartyPopper size={20} className="text-glow-500" />
             {t('lessonResult.newAchievement')}
           </p>
@@ -54,7 +54,7 @@ export default function LessonResult() {
             {state.newAchievements.map((a) => (
               <div key={a.id} className="flex flex-col items-center gap-1">
                 <span className="text-4xl">{a.icon}</span>
-                <span className="text-xs font-semibold text-slate-600">{a.name}</span>
+                <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">{a.name}</span>
               </div>
             ))}
           </div>
@@ -63,15 +63,15 @@ export default function LessonResult() {
 
       {state.wrongExercises.length > 0 && (
         <Card className="mb-6 p-6 text-left">
-          <p className="mb-3 flex items-center gap-2 font-bold text-slate-700">
+          <p className="mb-3 flex items-center gap-2 font-bold text-slate-700 dark:text-slate-200">
             <XCircle size={20} className="text-heart-500" />
             {t('lessonResult.reviewMistakesTitle')}
           </p>
           <div className="flex flex-col gap-3">
             {state.wrongExercises.map((ex) => (
               <div key={ex.id} className="rounded-xl bg-heart-500/5 px-4 py-3">
-                <p className="text-sm font-semibold text-slate-700">{ex.prompt}</p>
-                <p className="text-sm text-slate-500">{ex.explanation}</p>
+                <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{ex.prompt}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{ex.explanation}</p>
               </div>
             ))}
           </div>

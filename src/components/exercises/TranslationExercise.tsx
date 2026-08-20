@@ -19,7 +19,7 @@ export function TranslationExercise({ exercise, onAnswer }: ExerciseComponentPro
 
   return (
     <div>
-      <p className="mb-5 text-xl font-bold text-slate-800">{exercise.prompt}</p>
+      <p className="mb-5 text-xl font-bold text-slate-800 dark:text-slate-100">{exercise.prompt}</p>
       <textarea
         value={value}
         disabled={checked}
@@ -28,9 +28,9 @@ export function TranslationExercise({ exercise, onAnswer }: ExerciseComponentPro
         placeholder="Escreva sua tradução"
         className={clsx(
           'w-full resize-none rounded-2xl border-2 px-4 py-3 text-lg font-semibold outline-none transition-colors',
-          !checked && 'border-slate-200 focus:border-brand-400',
-          checked && correct && 'border-progress-500 bg-progress-50 text-progress-700',
-          checked && !correct && 'border-heart-500 bg-heart-500/10 text-heart-600',
+          !checked && 'border-slate-200 dark:border-slate-700 focus:border-brand-400',
+          checked && correct && 'border-progress-500 bg-progress-50 dark:bg-progress-900/30 text-progress-700 dark:text-progress-300',
+          checked && !correct && 'border-heart-500 bg-heart-500/10 dark:bg-heart-500/20 text-heart-600 dark:text-heart-400',
         )}
       />
       {!checked && (
@@ -39,8 +39,8 @@ export function TranslationExercise({ exercise, onAnswer }: ExerciseComponentPro
         </Button>
       )}
       {checked && !correct && (
-        <p className="mt-3 font-semibold text-slate-600">
-          Resposta esperada: <span className="text-progress-700">{exercise.correctText}</span>
+        <p className="mt-3 font-semibold text-slate-600 dark:text-slate-300">
+          Resposta esperada: <span className="text-progress-700 dark:text-progress-300">{exercise.correctText}</span>
         </p>
       )}
     </div>

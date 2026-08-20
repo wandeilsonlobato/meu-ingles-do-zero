@@ -56,7 +56,7 @@ export function MatchPairsExercise({ exercise, onAnswer }: ExerciseComponentProp
 
   return (
     <div>
-      <p className="mb-5 text-xl font-bold text-slate-800">{exercise.prompt}</p>
+      <p className="mb-5 text-xl font-bold text-slate-800 dark:text-slate-100">{exercise.prompt}</p>
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-2">
           {leftTiles.map((tile) => (
@@ -67,9 +67,9 @@ export function MatchPairsExercise({ exercise, onAnswer }: ExerciseComponentProp
               onClick={() => pickLeft(tile)}
               className={clsx(
                 'rounded-xl border-2 px-3 py-2 text-left font-semibold transition-colors',
-                matched.has(tile.pairId) && 'border-progress-500 bg-progress-50 text-progress-700 opacity-60',
-                !matched.has(tile.pairId) && selectedLeft?.id === tile.id && 'border-brand-500 bg-brand-50',
-                !matched.has(tile.pairId) && selectedLeft?.id !== tile.id && 'border-slate-200 bg-white hover:border-brand-200',
+                matched.has(tile.pairId) && 'border-progress-500 bg-progress-50 dark:bg-progress-900/30 text-progress-700 dark:text-progress-300 opacity-60',
+                !matched.has(tile.pairId) && selectedLeft?.id === tile.id && 'border-brand-500 bg-brand-50 dark:bg-brand-900/30',
+                !matched.has(tile.pairId) && selectedLeft?.id !== tile.id && 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-brand-200',
               )}
             >
               {tile.text}
@@ -85,9 +85,9 @@ export function MatchPairsExercise({ exercise, onAnswer }: ExerciseComponentProp
               onClick={() => pickRight(tile)}
               className={clsx(
                 'rounded-xl border-2 px-3 py-2 text-left font-semibold transition-colors',
-                matched.has(tile.pairId) && 'border-progress-500 bg-progress-50 text-progress-700 opacity-60',
-                wrongFlash === tile.id && 'animate-shake border-heart-500 bg-heart-500/10',
-                matched.has(tile.pairId) === false && wrongFlash !== tile.id && 'border-slate-200 bg-white hover:border-brand-200',
+                matched.has(tile.pairId) && 'border-progress-500 bg-progress-50 dark:bg-progress-900/30 text-progress-700 dark:text-progress-300 opacity-60',
+                wrongFlash === tile.id && 'animate-shake border-heart-500 bg-heart-500/10 dark:bg-heart-500/20',
+                matched.has(tile.pairId) === false && wrongFlash !== tile.id && 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-brand-200',
               )}
             >
               {tile.text}
@@ -96,11 +96,11 @@ export function MatchPairsExercise({ exercise, onAnswer }: ExerciseComponentProp
         </div>
       </div>
       {done && (
-        <p className="mt-4 font-semibold text-progress-700">
+        <p className="mt-4 font-semibold text-progress-700 dark:text-progress-300">
           Todas as duplas encontradas{mistakes > 0 ? ` (com ${mistakes} tentativa(s) errada(s))` : ''}!
         </p>
       )}
-      {!done && <p className="mt-4 text-sm text-slate-400">Combine todas as duplas para continuar.</p>}
+      {!done && <p className="mt-4 text-sm text-slate-400 dark:text-slate-500">Combine todas as duplas para continuar.</p>}
     </div>
   )
 }

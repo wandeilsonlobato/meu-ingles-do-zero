@@ -74,9 +74,9 @@ export default function Profile() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <Card className="mb-6 flex flex-col items-center gap-3 p-8 text-center">
+      <Card elevation="raised" className="mb-6 flex flex-col items-center gap-3 p-8 text-center">
         <div className="relative">
-          <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-brand-100 text-5xl">
+          <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-brand-100 dark:bg-brand-900/50 text-5xl">
             {user.avatarPhotoUrl ? (
               <img src={user.avatarPhotoUrl} alt="Foto de perfil" className="h-full w-full object-cover" />
             ) : (
@@ -93,45 +93,45 @@ export default function Profile() {
           </button>
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
         </div>
-        {uploading && <p className="text-xs text-slate-400">{t('profile.uploadingPhoto')}</p>}
+        {uploading && <p className="text-xs text-slate-400 dark:text-slate-500">{t('profile.uploadingPhoto')}</p>}
         {user.avatarPhotoUrl && !uploading && (
-          <button onClick={removeAvatarPhoto} className="text-xs font-semibold text-slate-400 hover:text-heart-600">
+          <button onClick={removeAvatarPhoto} className="text-xs font-semibold text-slate-400 dark:text-slate-500 hover:text-heart-600">
             {t('profile.removePhoto')}
           </button>
         )}
 
         {!editing ? (
           <>
-            <h1 className="text-2xl font-extrabold text-slate-800">{user.name}</h1>
-            <p className="text-sm text-slate-400">{user.email}</p>
-            {user.bio && <p className="max-w-md text-sm text-slate-600">{user.bio}</p>}
+            <h1 className="text-2xl font-extrabold text-slate-800 dark:text-slate-100">{user.name}</h1>
+            <p className="text-sm text-slate-400 dark:text-slate-500">{user.email}</p>
+            {user.bio && <p className="max-w-md text-sm text-slate-600 dark:text-slate-300">{user.bio}</p>}
             <button
               onClick={startEditing}
-              className="flex items-center gap-1 text-sm font-semibold text-brand-600 hover:underline"
+              className="flex items-center gap-1 text-sm font-semibold text-brand-600 dark:text-brand-400 hover:underline"
             >
               <Pencil size={14} /> {t('profile.editProfile')}
             </button>
           </>
         ) : (
           <div className="w-full max-w-sm text-left">
-            <label className="mb-1 block text-xs font-semibold text-slate-500">{t('profile.nameLabel')}</label>
+            <label className="mb-1 block text-xs font-semibold text-slate-500 dark:text-slate-400">{t('profile.nameLabel')}</label>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
               maxLength={40}
-              className="mb-3 w-full rounded-xl border-2 border-slate-200 px-3 py-2 text-sm outline-none focus:border-brand-400"
+              className="mb-3 w-full rounded-xl border-2 border-slate-200 dark:border-slate-700 px-3 py-2 text-sm outline-none focus:border-brand-400"
             />
-            <label className="mb-1 block text-xs font-semibold text-slate-500">{t('profile.bioLabel')}</label>
+            <label className="mb-1 block text-xs font-semibold text-slate-500 dark:text-slate-400">{t('profile.bioLabel')}</label>
             <textarea
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               maxLength={160}
               rows={3}
               placeholder={t('profile.bioPlaceholder')}
-              className="mb-1 w-full resize-none rounded-xl border-2 border-slate-200 px-3 py-2 text-sm outline-none focus:border-brand-400"
+              className="mb-1 w-full resize-none rounded-xl border-2 border-slate-200 dark:border-slate-700 px-3 py-2 text-sm outline-none focus:border-brand-400"
             />
-            <p className="mb-3 text-right text-[11px] text-slate-400">{bio.length}/160</p>
-            {error && <p className="mb-3 text-xs font-semibold text-heart-600">{error}</p>}
+            <p className="mb-3 text-right text-[11px] text-slate-400 dark:text-slate-500">{bio.length}/160</p>
+            {error && <p className="mb-3 text-xs font-semibold text-heart-600 dark:text-heart-400">{error}</p>}
             <div className="flex gap-2">
               <Button size="sm" onClick={saveEdits}>
                 {t('common.save')}
@@ -143,8 +143,8 @@ export default function Profile() {
           </div>
         )}
 
-        <span className="rounded-full bg-glow-100 px-4 py-1 text-sm font-bold text-glow-700">{t('profile.rank')}: {rank}</span>
-        {next && <p className="text-xs text-slate-400">{t('profile.xpToNextRank', { xp: next.xpNeeded, rank: next.rank })}</p>}
+        <span className="rounded-full bg-glow-100 dark:bg-glow-900/50 px-4 py-1 text-sm font-bold text-glow-700 dark:text-glow-300">{t('profile.rank')}: {rank}</span>
+        {next && <p className="text-xs text-slate-400 dark:text-slate-500">{t('profile.xpToNextRank', { xp: next.xpNeeded, rank: next.rank })}</p>}
 
         <div className="mt-3 flex flex-wrap justify-center gap-2">
           <button
@@ -184,7 +184,7 @@ export default function Profile() {
       </div>
 
       <Card className="p-6">
-        <h2 className="mb-4 font-bold text-slate-700">{t('profile.achievements')}</h2>
+        <h2 className="mb-4 font-bold text-slate-700 dark:text-slate-200">{t('profile.achievements')}</h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           {ACHIEVEMENTS.map((a) => {
             const earned = earnedIds.has(a.id)
@@ -193,12 +193,12 @@ export default function Profile() {
                 key={a.id}
                 className={clsx(
                   'flex flex-col items-center gap-1 rounded-2xl border-2 p-4 text-center',
-                  earned ? 'border-glow-300 bg-glow-50' : 'border-slate-100 bg-slate-50 opacity-50',
+                  earned ? 'border-glow-300 bg-glow-50 dark:bg-glow-900/30' : 'border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 opacity-50',
                 )}
               >
                 <span className="text-3xl">{a.icon}</span>
-                <span className="text-xs font-bold text-slate-700">{a.name}</span>
-                <span className="text-[11px] text-slate-400">{a.description}</span>
+                <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{a.name}</span>
+                <span className="text-[11px] text-slate-400 dark:text-slate-500">{a.description}</span>
               </div>
             )
           })}
@@ -211,8 +211,8 @@ export default function Profile() {
 function StatCard({ label, value }: { label: string; value: string | number }) {
   return (
     <Card className="p-4 text-center">
-      <p className="text-2xl font-extrabold text-brand-700">{value}</p>
-      <p className="text-xs font-semibold text-slate-400">{label}</p>
+      <p className="text-2xl font-extrabold text-brand-700 dark:text-brand-300">{value}</p>
+      <p className="text-xs font-semibold text-slate-400 dark:text-slate-500">{label}</p>
     </Card>
   )
 }

@@ -29,17 +29,17 @@ export default function Store() {
   return (
     <div className="mx-auto max-w-3xl">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-extrabold text-slate-800">{t('store.title')}</h1>
+        <h1 className="text-2xl font-extrabold text-slate-800 dark:text-slate-100">{t('store.title')}</h1>
         <CoinsBadge coins={user.coins} />
       </div>
 
       {message && (
-        <div className="mb-4 rounded-xl bg-brand-50 px-4 py-2 text-center text-sm font-semibold text-brand-700">
+        <div className="mb-4 rounded-xl bg-brand-50 dark:bg-brand-900/30 px-4 py-2 text-center text-sm font-semibold text-brand-700 dark:text-brand-300">
           {message}
         </div>
       )}
 
-      <h2 className="mb-3 font-bold text-slate-700">{t('store.items')}</h2>
+      <h2 className="mb-3 font-bold text-slate-700 dark:text-slate-200">{t('store.items')}</h2>
       <div className="mb-8 grid gap-4 sm:grid-cols-2">
         {functionalItems.map((item) => {
           const canAfford = user.coins >= item.cost
@@ -47,8 +47,8 @@ export default function Store() {
             <Card key={item.id} className="flex items-center gap-4 p-5">
               <span className="text-4xl">{item.emoji}</span>
               <div className="flex-1">
-                <p className="font-bold text-slate-800">{item.name}</p>
-                <p className="text-sm text-slate-500">{item.description}</p>
+                <p className="font-bold text-slate-800 dark:text-slate-100">{item.name}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{item.description}</p>
               </div>
               <Button size="sm" disabled={!canAfford} onClick={() => handleBuy(item.id)}>
                 {item.cost} 🪙
@@ -58,7 +58,7 @@ export default function Store() {
         })}
       </div>
 
-      <h2 className="mb-3 font-bold text-slate-700">{t('store.avatars')}</h2>
+      <h2 className="mb-3 font-bold text-slate-700 dark:text-slate-200">{t('store.avatars')}</h2>
       <div className="grid gap-4 sm:grid-cols-2">
         {avatarItems.map((item) => {
           const owned = user.ownedCosmetics.includes(item.id)
@@ -67,8 +67,8 @@ export default function Store() {
             <Card key={item.id} className="flex items-center gap-4 p-5">
               <span className="text-4xl">{item.emoji}</span>
               <div className="flex-1">
-                <p className="font-bold text-slate-800">{item.name}</p>
-                <p className="text-sm text-slate-500">{item.description}</p>
+                <p className="font-bold text-slate-800 dark:text-slate-100">{item.name}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{item.description}</p>
               </div>
               <Button
                 size="sm"
@@ -83,7 +83,7 @@ export default function Store() {
         })}
       </div>
 
-      <p className="mt-6 text-center text-xs text-slate-400">{t('store.footerHint')}</p>
+      <p className="mt-6 text-center text-xs text-slate-400 dark:text-slate-500">{t('store.footerHint')}</p>
     </div>
   )
 }

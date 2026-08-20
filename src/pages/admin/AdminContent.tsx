@@ -81,21 +81,21 @@ export default function AdminContent() {
   return (
     <AdminLayout>
       <Card className="mb-6 p-6">
-        <h2 className="mb-4 font-bold text-slate-700">Trilha publicada (somente leitura)</h2>
+        <h2 className="mb-4 font-bold text-slate-700 dark:text-slate-200">Trilha publicada (somente leitura)</h2>
         <div className="flex flex-col gap-4">
           {COURSE.map((level) => (
             <div key={level.id}>
-              <p className="font-bold text-brand-700">
+              <p className="font-bold text-brand-700 dark:text-brand-300">
                 {level.code} — {level.title}
               </p>
-              {level.units.length === 0 && <p className="text-sm text-slate-400">Sem unidades ainda.</p>}
+              {level.units.length === 0 && <p className="text-sm text-slate-400 dark:text-slate-500">Sem unidades ainda.</p>}
               {level.units.map((unit) => (
                 <div key={unit.id} className="ml-4 mt-1">
-                  <p className="text-sm font-semibold text-slate-600">{unit.title}</p>
-                  <ul className="ml-4 list-disc text-sm text-slate-500">
+                  <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{unit.title}</p>
+                  <ul className="ml-4 list-disc text-sm text-slate-500 dark:text-slate-400">
                     {unit.lessons.map((lesson) => (
                       <li key={lesson.id}>
-                        {lesson.title} <span className="text-xs text-slate-400">({lesson.exercises.length} exercícios)</span>
+                        {lesson.title} <span className="text-xs text-slate-400 dark:text-slate-500">({lesson.exercises.length} exercícios)</span>
                       </li>
                     ))}
                   </ul>
@@ -107,35 +107,35 @@ export default function AdminContent() {
       </Card>
 
       <Card className="mb-6 p-6">
-        <h2 className="mb-4 font-bold text-slate-700">Rascunhos de lição (CRUD local)</h2>
-        <p className="mb-4 text-xs text-slate-400">
+        <h2 className="mb-4 font-bold text-slate-700 dark:text-slate-200">Rascunhos de lição (CRUD local)</h2>
+        <p className="mb-4 text-xs text-slate-400 dark:text-slate-500">
           Cadastre novas lições com exercícios de múltipla escolha ou verdadeiro/falso. Ficam como rascunho até a
           publicação (que, com um backend real, viraria uma migração de conteúdo no banco).
         </p>
 
-        <div className="mb-6 flex flex-col gap-3 rounded-2xl bg-slate-50 p-4">
+        <div className="mb-6 flex flex-col gap-3 rounded-2xl bg-slate-50 dark:bg-slate-900 p-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <input
               placeholder="Título da lição"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="rounded-xl border-2 border-slate-200 px-3 py-2"
+              className="rounded-xl border-2 border-slate-200 dark:border-slate-700 px-3 py-2"
             />
             <input
               placeholder="Nome da unidade"
               value={unitTitle}
               onChange={(e) => setUnitTitle(e.target.value)}
-              className="rounded-xl border-2 border-slate-200 px-3 py-2"
+              className="rounded-xl border-2 border-slate-200 dark:border-slate-700 px-3 py-2"
             />
           </div>
 
           {exercises.map((ex, i) => (
-            <div key={i} className="rounded-xl border border-slate-200 bg-white p-3">
+            <div key={i} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3">
               <div className="mb-2 flex items-center justify-between">
                 <select
                   value={ex.type}
                   onChange={(e) => updateExercise(i, { type: e.target.value as DraftExercise['type'] })}
-                  className="rounded-lg border border-slate-200 px-2 py-1 text-sm"
+                  className="rounded-lg border border-slate-200 dark:border-slate-700 px-2 py-1 text-sm"
                 >
                   <option value="multiple_choice">Múltipla escolha</option>
                   <option value="true_false">Verdadeiro ou falso</option>
@@ -150,13 +150,13 @@ export default function AdminContent() {
                 placeholder="Enunciado"
                 value={ex.prompt}
                 onChange={(e) => updateExercise(i, { prompt: e.target.value })}
-                className="mb-2 w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm"
+                className="mb-2 w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-sm"
               />
               <input
                 placeholder="Explicação da resposta correta"
                 value={ex.explanation}
                 onChange={(e) => updateExercise(i, { explanation: e.target.value })}
-                className="mb-2 w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm"
+                className="mb-2 w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-sm"
               />
               <div className="flex flex-col gap-1">
                 {ex.options.map((opt, oi) => (
@@ -170,13 +170,13 @@ export default function AdminContent() {
                       placeholder={`Opção ${oi + 1}`}
                       value={opt}
                       onChange={(e) => updateOption(i, oi, e.target.value)}
-                      className="flex-1 rounded-lg border border-slate-200 px-3 py-1.5 text-sm"
+                      className="flex-1 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-sm"
                     />
                   </div>
                 ))}
               </div>
               {ex.type === 'multiple_choice' && ex.options.length < 4 && (
-                <button onClick={() => addOption(i)} className="mt-2 text-xs font-bold text-brand-600">
+                <button onClick={() => addOption(i)} className="mt-2 text-xs font-bold text-brand-600 dark:text-brand-400">
                   + adicionar opção
                 </button>
               )}
@@ -194,12 +194,12 @@ export default function AdminContent() {
         </div>
 
         <div className="flex flex-col gap-2">
-          {customLessonDrafts.length === 0 && <p className="text-sm text-slate-400">Nenhum rascunho ainda.</p>}
+          {customLessonDrafts.length === 0 && <p className="text-sm text-slate-400 dark:text-slate-500">Nenhum rascunho ainda.</p>}
           {customLessonDrafts.map((draft) => (
-            <div key={draft.id} className="flex items-center justify-between rounded-xl border border-slate-200 px-4 py-3">
+            <div key={draft.id} className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3">
               <div>
-                <p className="font-semibold text-slate-700">{draft.title}</p>
-                <p className="text-xs text-slate-400">
+                <p className="font-semibold text-slate-700 dark:text-slate-200">{draft.title}</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500">
                   {draft.unitTitle} • {draft.exercises.length} exercício(s)
                 </p>
               </div>

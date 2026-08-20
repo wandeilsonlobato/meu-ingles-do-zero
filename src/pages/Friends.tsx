@@ -10,7 +10,7 @@ import type { PublicProfile } from '../types'
 
 function AvatarBadge({ profile }: { profile: { avatarEmoji: string; avatarPhotoUrl?: string } }) {
   return (
-    <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-100 text-2xl">
+    <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-100 dark:bg-brand-900/50 text-2xl">
       {profile.avatarPhotoUrl ? (
         <img src={profile.avatarPhotoUrl} alt="" className="h-full w-full object-cover" />
       ) : (
@@ -94,10 +94,10 @@ export default function Friends() {
   function renderPersonRow(userId: string, actions: React.ReactNode) {
     const profile = profilesById[userId]
     return (
-      <div key={userId} className="flex items-center gap-3 rounded-xl px-2 py-2 hover:bg-slate-50">
+      <div key={userId} className="flex items-center gap-3 rounded-xl px-2 py-2 hover:bg-slate-50 dark:hover:bg-slate-800">
         <button className="flex flex-1 items-center gap-3 text-left" onClick={() => navigate(`/app/usuario/${userId}`)}>
-          {profile ? <AvatarBadge profile={profile} /> : <div className="h-11 w-11 rounded-full bg-slate-100" />}
-          <span className="font-semibold text-slate-700">{profile?.name ?? t('friends.loadingProfile')}</span>
+          {profile ? <AvatarBadge profile={profile} /> : <div className="h-11 w-11 rounded-full bg-slate-100 dark:bg-slate-800" />}
+          <span className="font-semibold text-slate-700 dark:text-slate-200">{profile?.name ?? t('friends.loadingProfile')}</span>
         </button>
         <div className="flex shrink-0 gap-2">{actions}</div>
       </div>
@@ -106,17 +106,17 @@ export default function Friends() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="mb-6 text-2xl font-extrabold text-slate-800">{t('friends.title')}</h1>
+      <h1 className="mb-6 text-2xl font-extrabold text-slate-800 dark:text-slate-100">{t('friends.title')}</h1>
 
       {message && (
-        <div className="mb-4 rounded-xl bg-brand-50 px-4 py-2 text-center text-sm font-semibold text-brand-700">
+        <div className="mb-4 rounded-xl bg-brand-50 dark:bg-brand-900/30 px-4 py-2 text-center text-sm font-semibold text-brand-700 dark:text-brand-300">
           {message}
         </div>
       )}
 
       <Card className="mb-6 p-5">
-        <div className="mb-3 flex items-center gap-2 rounded-xl border-2 border-slate-200 px-3 py-2 focus-within:border-brand-400">
-          <Search size={18} className="text-slate-400" />
+        <div className="mb-3 flex items-center gap-2 rounded-xl border-2 border-slate-200 dark:border-slate-700 px-3 py-2 focus-within:border-brand-400">
+          <Search size={18} className="text-slate-400 dark:text-slate-500" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -124,29 +124,29 @@ export default function Friends() {
             className="w-full text-sm outline-none"
           />
         </div>
-        {searching && <p className="text-sm text-slate-400">{t('friends.searching')}</p>}
+        {searching && <p className="text-sm text-slate-400 dark:text-slate-500">{t('friends.searching')}</p>}
         {!searching && query.trim() && results.length === 0 && (
-          <p className="text-sm text-slate-400">{t('friends.noResults')}</p>
+          <p className="text-sm text-slate-400 dark:text-slate-500">{t('friends.noResults')}</p>
         )}
         <div className="flex flex-col gap-2">
           {results.map((r) => {
             const existing = friendshipByOtherId.get(r.id)
             return (
-              <div key={r.id} className="flex items-center gap-3 rounded-xl px-2 py-2 hover:bg-slate-50">
+              <div key={r.id} className="flex items-center gap-3 rounded-xl px-2 py-2 hover:bg-slate-50 dark:hover:bg-slate-800">
                 <button
                   className="flex flex-1 items-center gap-3 text-left"
                   onClick={() => navigate(`/app/usuario/${r.id}`)}
                 >
                   <AvatarBadge profile={r} />
-                  <span className="font-semibold text-slate-700">{r.name}</span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-200">{r.name}</span>
                 </button>
                 {!existing && (
                   <Button size="sm" variant="secondary" icon={<UserPlus size={14} />} onClick={() => handleAddFriend(r.id)}>
                     {t('friends.add')}
                   </Button>
                 )}
-                {existing?.status === 'pending' && <span className="text-xs text-slate-400">{t('friends.pending')}</span>}
-                {existing?.status === 'accepted' && <span className="text-xs text-progress-600">{t('friends.alreadyFriends')}</span>}
+                {existing?.status === 'pending' && <span className="text-xs text-slate-400 dark:text-slate-500">{t('friends.pending')}</span>}
+                {existing?.status === 'accepted' && <span className="text-xs text-progress-600 dark:text-progress-400">{t('friends.alreadyFriends')}</span>}
               </div>
             )
           })}
@@ -155,7 +155,7 @@ export default function Friends() {
 
       {incoming.length > 0 && (
         <Card className="mb-6 p-5">
-          <h2 className="mb-3 font-bold text-slate-700">{t('friends.incomingTitle')}</h2>
+          <h2 className="mb-3 font-bold text-slate-700 dark:text-slate-200">{t('friends.incomingTitle')}</h2>
           <div className="flex flex-col gap-2">
             {incoming.map((f) =>
               renderPersonRow(
@@ -176,7 +176,7 @@ export default function Friends() {
 
       {outgoing.length > 0 && (
         <Card className="mb-6 p-5">
-          <h2 className="mb-3 font-bold text-slate-700">{t('friends.outgoingTitle')}</h2>
+          <h2 className="mb-3 font-bold text-slate-700 dark:text-slate-200">{t('friends.outgoingTitle')}</h2>
           <div className="flex flex-col gap-2">
             {outgoing.map((f) =>
               renderPersonRow(
@@ -191,8 +191,8 @@ export default function Friends() {
       )}
 
       <Card className="p-5">
-        <h2 className="mb-3 font-bold text-slate-700">{t('friends.myFriendsTitle', { count: accepted.length })}</h2>
-        {accepted.length === 0 && <p className="text-sm text-slate-400">{t('friends.noFriendsYet')}</p>}
+        <h2 className="mb-3 font-bold text-slate-700 dark:text-slate-200">{t('friends.myFriendsTitle', { count: accepted.length })}</h2>
+        {accepted.length === 0 && <p className="text-sm text-slate-400 dark:text-slate-500">{t('friends.noFriendsYet')}</p>}
         <div className="flex flex-col gap-2">
           {accepted.map((f) => {
             const otherId = f.requesterId === user.id ? f.addresseeId : f.requesterId

@@ -15,9 +15,9 @@ import { todayLocalDate } from '../lib/auth'
 import { useT } from '../lib/i18n'
 
 const ZONE_STYLES = [
-  'from-brand-50 border-brand-100',
-  'from-progress-50 border-progress-100',
-  'from-glow-50 border-glow-100',
+  'from-brand-50 dark:from-brand-900/20 border-brand-100 dark:border-brand-800',
+  'from-progress-50 dark:from-progress-900/20 border-progress-100 dark:border-progress-800',
+  'from-glow-50 dark:from-glow-900/20 border-glow-100 dark:border-glow-800',
 ]
 
 export default function Dashboard() {
@@ -39,10 +39,10 @@ export default function Dashboard() {
 
   return (
     <div>
-      <Card className="mb-6 flex flex-col items-center justify-between gap-4 p-6 sm:flex-row">
+      <Card elevation="raised" className="mb-6 flex flex-col items-center justify-between gap-4 p-6 sm:flex-row">
         <div>
-          <p className="text-sm font-semibold text-slate-400">{t('dashboard.continueFrom')}</p>
-          <h1 className="text-xl font-extrabold text-slate-800">{nextLesson ? nextLesson.title : t('dashboard.trailComplete')}</h1>
+          <p className="text-sm font-semibold text-slate-400 dark:text-slate-500">{t('dashboard.continueFrom')}</p>
+          <h1 className="text-xl font-extrabold text-slate-800 dark:text-slate-100">{nextLesson ? nextLesson.title : t('dashboard.trailComplete')}</h1>
         </div>
         {nextLesson && (
           <Button
@@ -56,14 +56,14 @@ export default function Dashboard() {
       </Card>
 
       {dueCount > 0 && (
-        <Card className="mb-6 flex flex-col items-center justify-between gap-4 border-glow-200 bg-glow-50 p-6 sm:flex-row">
+        <Card className="mb-6 flex flex-col items-center justify-between gap-4 border-glow-200 dark:border-glow-800 bg-glow-50 dark:bg-glow-900/30 p-6 sm:flex-row">
           <div className="flex items-center gap-3">
-            <RotateCcw className="text-glow-600" size={24} />
+            <RotateCcw className="text-glow-600 dark:text-glow-400" size={24} />
             <div>
-              <p className="font-extrabold text-slate-800">
+              <p className="font-extrabold text-slate-800 dark:text-slate-100">
                 {dueCount} {dueCount === 1 ? t('dashboard.reviewDueItem') : t('dashboard.reviewDueItems')} {t('dashboard.reviewDueSuffix')}
               </p>
-              <p className="text-sm text-slate-500">{t('dashboard.reviewDueSubtitle')}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{t('dashboard.reviewDueSubtitle')}</p>
             </div>
           </div>
           <Button variant="secondary" onClick={() => navigate('/app/revisao')}>
@@ -81,32 +81,32 @@ export default function Dashboard() {
         return (
           <section
             key={level.id}
-            className={clsx('mb-10 rounded-3xl border-2 bg-gradient-to-b to-white p-6', zone, !unlocked && 'from-slate-50 border-slate-200')}
+            className={clsx('mb-10 rounded-3xl border-2 bg-gradient-to-b to-white dark:to-slate-900 p-6', zone, !unlocked && 'from-slate-50 dark:from-slate-800/60 border-slate-200 dark:border-slate-700')}
           >
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-wide text-brand-500">{t('dashboard.level')} {level.code}</p>
-                <h2 className="text-lg font-extrabold text-slate-800">{level.title}</h2>
-                <p className="text-sm text-slate-500">{level.description}</p>
+                <h2 className="text-lg font-extrabold text-slate-800 dark:text-slate-100">{level.title}</h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{level.description}</p>
               </div>
-              {!unlocked && <Lock className="text-slate-300" size={24} />}
+              {!unlocked && <Lock className="text-slate-300 dark:text-slate-600" size={24} />}
             </div>
 
             {unlocked && hasContent && <ProgressBar value={pct} max={100} className="mb-6" />}
 
             {!unlocked && (
-              <Card className="p-6 text-center text-slate-400">{t('dashboard.lockedMessage')}</Card>
+              <Card className="p-6 text-center text-slate-400 dark:text-slate-500">{t('dashboard.lockedMessage')}</Card>
             )}
 
             {unlocked && !hasContent && (
-              <Card className="p-6 text-center text-slate-400">{t('dashboard.inConstruction')}</Card>
+              <Card className="p-6 text-center text-slate-400 dark:text-slate-500">{t('dashboard.inConstruction')}</Card>
             )}
 
             {unlocked &&
               hasContent &&
               level.units.map((unit) => (
                 <div key={unit.id} className="mb-8">
-                  <h3 className="mb-4 text-center text-sm font-bold text-slate-500">{unit.title}</h3>
+                  <h3 className="mb-4 text-center text-sm font-bold text-slate-500 dark:text-slate-400">{unit.title}</h3>
                   <div className="relative flex flex-col items-center gap-6 py-2">
                     <div
                       className="pointer-events-none absolute top-2 bottom-2 left-1/2 z-0 w-0.5 -translate-x-1/2 border-l-4 border-dashed border-white/70"
@@ -131,7 +131,7 @@ export default function Dashboard() {
         )
       })}
 
-      <p className={clsx('text-center text-sm text-slate-400', COURSE.length === 0 && 'hidden')}>
+      <p className={clsx('text-center text-sm text-slate-400 dark:text-slate-500', COURSE.length === 0 && 'hidden')}>
         {t('dashboard.moreComingSoon')}
       </p>
     </div>

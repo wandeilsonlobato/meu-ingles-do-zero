@@ -37,24 +37,24 @@ export function SentenceOrderExercise({ exercise, onAnswer }: ExerciseComponentP
 
   return (
     <div>
-      <p className="mb-5 text-xl font-bold text-slate-800">{exercise.prompt}</p>
+      <p className="mb-5 text-xl font-bold text-slate-800 dark:text-slate-100">{exercise.prompt}</p>
 
       <div
         className={clsx(
           'mb-4 flex min-h-16 flex-wrap gap-2 rounded-2xl border-2 border-dashed p-3',
-          !checked && 'border-slate-300 bg-slate-50',
-          checked && correct && 'border-progress-500 bg-progress-50',
-          checked && !correct && 'border-heart-500 bg-heart-500/10',
+          !checked && 'border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900',
+          checked && correct && 'border-progress-500 bg-progress-50 dark:bg-progress-900/30',
+          checked && !correct && 'border-heart-500 bg-heart-500/10 dark:bg-heart-500/20',
         )}
       >
-        {answer.length === 0 && <span className="text-slate-400">Toque nas palavras abaixo para montar a frase</span>}
+        {answer.length === 0 && <span className="text-slate-400 dark:text-slate-500">Toque nas palavras abaixo para montar a frase</span>}
         {answer.map((tile) => (
           <button
             key={tile.key}
             type="button"
             disabled={checked}
             onClick={() => moveToBank(tile)}
-            className="rounded-xl border-2 border-brand-300 bg-white px-3 py-2 font-bold text-brand-700 shadow-sm"
+            className="rounded-xl border-2 border-brand-300 bg-white dark:bg-slate-800 px-3 py-2 font-bold text-brand-700 dark:text-brand-300 shadow-sm"
           >
             {tile.word}
           </button>
@@ -68,7 +68,7 @@ export function SentenceOrderExercise({ exercise, onAnswer }: ExerciseComponentP
             type="button"
             disabled={checked}
             onClick={() => moveToAnswer(tile)}
-            className="rounded-xl border-2 border-slate-200 bg-white px-3 py-2 font-bold text-slate-700 shadow-sm hover:border-brand-300"
+            className="rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 font-bold text-slate-700 dark:text-slate-200 shadow-sm hover:border-brand-300"
           >
             {tile.word}
           </button>
@@ -81,8 +81,8 @@ export function SentenceOrderExercise({ exercise, onAnswer }: ExerciseComponentP
         </Button>
       )}
       {checked && !correct && (
-        <p className="mt-3 font-semibold text-slate-600">
-          Ordem correta: <span className="text-progress-700">{(exercise.correctOrder ?? []).join(' ')}</span>
+        <p className="mt-3 font-semibold text-slate-600 dark:text-slate-300">
+          Ordem correta: <span className="text-progress-700 dark:text-progress-300">{(exercise.correctOrder ?? []).join(' ')}</span>
         </p>
       )}
     </div>

@@ -37,8 +37,8 @@ export default function Review() {
     return (
       <div className="mx-auto max-w-xl text-center">
         <div className="mb-3 text-6xl">🎉</div>
-        <h1 className="mb-1 text-2xl font-extrabold text-slate-800">{t('review.completeTitle')}</h1>
-        <p className="mb-6 text-slate-500">{t('review.completeBody', { count: dueExercises.length })}</p>
+        <h1 className="mb-1 text-2xl font-extrabold text-slate-800 dark:text-slate-100">{t('review.completeTitle')}</h1>
+        <p className="mb-6 text-slate-500 dark:text-slate-400">{t('review.completeBody', { count: dueExercises.length })}</p>
         <Button onClick={() => navigate('/app')}>{t('review.backToTrail')}</Button>
       </div>
     )
@@ -49,8 +49,8 @@ export default function Review() {
       <div className="mx-auto max-w-xl text-center">
         <Card className="p-8">
           <PartyPopper className="mx-auto mb-3 text-glow-500" size={40} />
-          <h1 className="mb-1 text-xl font-extrabold text-slate-800">{t('review.nothingTitle')}</h1>
-          <p className="mb-6 text-slate-500">
+          <h1 className="mb-1 text-xl font-extrabold text-slate-800 dark:text-slate-100">{t('review.nothingTitle')}</h1>
+          <p className="mb-6 text-slate-500 dark:text-slate-400">
             {reviewQueue.length > 0 ? t('review.nothingDue') : t('review.nothingEver')}
           </p>
           <Button variant="secondary" onClick={() => navigate('/app')}>
@@ -66,12 +66,12 @@ export default function Review() {
       <div className="mb-4 flex items-center justify-between">
         <button
           onClick={() => navigate('/app')}
-          className="flex items-center gap-1 text-slate-400 hover:text-slate-600"
+          className="flex items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-slate-600"
           aria-label={t('lesson.exitLesson')}
         >
           <X size={20} />
         </button>
-        <span className="flex items-center gap-1 text-sm font-semibold text-slate-500">
+        <span className="flex items-center gap-1 text-sm font-semibold text-slate-500 dark:text-slate-400">
           <RotateCcw size={16} />
           {t('review.title')}
         </span>

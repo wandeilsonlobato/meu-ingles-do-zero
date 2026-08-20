@@ -21,6 +21,15 @@
       content="Meu Inglês do Zero: aprenda inglês do absoluto zero, em português, com trilha por níveis, pronúncia e gamificação diária."
     />
     <title>Meu Inglês do Zero</title>
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('meu-ingles-do-zero-theme');
+          var isDark = stored === 'dark' || (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) document.documentElement.classList.add('dark');
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

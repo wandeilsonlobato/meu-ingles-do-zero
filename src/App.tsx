@@ -20,6 +20,7 @@ import AdminContent from './pages/admin/AdminContent'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { useAppStore } from './store/useAppStore'
 import { I18nProvider, useT } from './lib/i18n'
+import { ThemeProvider } from './lib/theme'
 
 function OnboardingRoute() {
   const user = useAppStore((s) => s.currentUser())
@@ -33,12 +34,12 @@ function AdminRoute({ children }: { children: ReactNode }) {
   if (!user) return <Navigate to="/entrar" replace />
   if (!user.isAdmin) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-slate-50 px-4 text-center">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-slate-50 px-4 text-center dark:bg-slate-900">
         <p className="text-4xl">🔒</p>
-        <h1 className="text-xl font-extrabold text-slate-800">Acesso restrito</h1>
-        <p className="max-w-sm text-sm text-slate-500">
+        <h1 className="text-xl font-extrabold text-slate-800 dark:text-slate-100">Acesso restrito</h1>
+        <p className="max-w-sm text-sm text-slate-500 dark:text-slate-400">
           Sua conta não tem permissão de administrador. Para liberar, marque{' '}
-          <code className="rounded bg-slate-200 px-1 py-0.5">is_admin = true</code> no seu perfil pelo painel do
+          <code className="rounded bg-slate-200 px-1 py-0.5 dark:bg-slate-800">is_admin = true</code> no seu perfil pelo painel do
           Supabase.
         </p>
         <Navigate to="/app" replace />
@@ -59,9 +60,9 @@ function AuthGate({ children }: { children: ReactNode }) {
 
   if (authLoading) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-brand-50">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-brand-50 dark:bg-slate-900">
         <BookOpen className="animate-pulse text-brand-500" size={40} />
-        <p className="font-semibold text-brand-600">{t('common.loading')}</p>
+        <p className="font-semibold text-brand-600 dark:text-brand-400">{t('common.loading')}</p>
       </div>
     )
   }
@@ -72,6 +73,7 @@ function AuthGate({ children }: { children: ReactNode }) {
 export default function App() {
   return (
     <BrowserRouter>
+      <ThemeProvider>
       <I18nProvider>
         <AuthGate>
           <Routes>
@@ -182,6 +184,7 @@ export default function App() {
           </Routes>
         </AuthGate>
       </I18nProvider>
+      </ThemeProvider>
     </BrowserRouter>
   )
 }

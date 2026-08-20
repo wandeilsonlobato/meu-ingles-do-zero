@@ -91,7 +91,7 @@ export function ExerciseRunner({ lesson, onComplete, onOutOfHearts }: ExerciseRu
         <HeartsDisplay current={user.livesCurrent} max={user.livesMax} />
       </div>
 
-      <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200">
+      <div className="rounded-3xl bg-white dark:bg-slate-800 p-6 shadow-sm border border-slate-200 dark:border-slate-700">
         <ExerciseComponent
           key={`${exercise.id}-${attempt}`}
           exercise={exercise}
@@ -105,7 +105,7 @@ export function ExerciseRunner({ lesson, onComplete, onOutOfHearts }: ExerciseRu
         <div
           className={clsx(
             'mt-4 rounded-2xl p-4',
-            lastCorrect ? 'bg-progress-50 text-progress-800' : 'bg-heart-500/10 text-heart-700',
+            lastCorrect ? 'bg-progress-50 dark:bg-progress-900/30 text-progress-800 dark:text-progress-300' : 'bg-heart-500/10 dark:bg-heart-500/20 text-heart-700 dark:text-heart-300',
           )}
         >
           <div className="mb-1 flex items-center gap-2 font-bold">
@@ -128,7 +128,7 @@ export function ExerciseRunner({ lesson, onComplete, onOutOfHearts }: ExerciseRu
       )}
 
       {heartsNowZero && (
-        <div className="mt-4 rounded-2xl bg-heart-500/10 p-5 text-center text-heart-700">
+        <div className="mt-4 rounded-2xl bg-heart-500/10 dark:bg-heart-500/20 p-5 text-center text-heart-700 dark:text-heart-300">
           <p className="mb-1 font-extrabold text-lg">{t('lesson.outOfHeartsTitle')}</p>
           <p className="mb-4 text-sm">{t('lesson.outOfHeartsBody')}</p>
           <Button variant="danger" size="sm" onClick={onOutOfHearts}>

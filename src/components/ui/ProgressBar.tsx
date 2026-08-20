@@ -13,7 +13,7 @@ export function ProgressBar({
   value,
   max,
   colorClassName = 'bg-progress-500',
-  trackClassName = 'bg-slate-200',
+  trackClassName = 'bg-slate-200 dark:bg-slate-700',
   label,
   className,
 }: ProgressBarProps) {

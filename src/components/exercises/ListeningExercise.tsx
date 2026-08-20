@@ -11,7 +11,7 @@ export function ListeningExercise({ exercise, onAnswer }: ExerciseComponentProps
 
   return (
     <div>
-      <p className="mb-5 text-xl font-bold text-slate-800">{exercise.prompt}</p>
+      <p className="mb-5 text-xl font-bold text-slate-800 dark:text-slate-100">{exercise.prompt}</p>
       <button
         type="button"
         onClick={() => exercise.audioText && speak(exercise.audioText)}
