@@ -121,7 +121,6 @@ export default function Dashboard() {
                           lesson={lesson}
                           status={status}
                           index={lesson.order}
-                          isNext={lesson.id === nextLesson?.id}
                         />
                       )
                     })}

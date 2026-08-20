@@ -7,7 +7,6 @@ import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/i18n'
 import { PLACEMENT_QUESTIONS } from '../data/placementTest'
 import { MultipleChoiceExercise } from '../components/exercises/MultipleChoiceExercise'
-import { CatMascot } from '../components/mascot/CatMascot'
 import type { DailyGoal } from '../types'
 
 const GOALS: DailyGoal[] = ['casual', 'regular', 'serio', 'intenso']
@@ -201,9 +200,7 @@ export default function Onboarding() {
 
             {placementStage === 'result' && (
               <div className="text-center">
-                <div className="mb-4 flex justify-center">
-                  <CatMascot pose="wave" size={110} />
-                </div>
+                <div className="mb-4 text-5xl">🎯</div>
                 <h1 className="mb-2 text-2xl font-extrabold text-slate-800">
                   {t('onboarding.placementResultTitle', { level: startLabel })}
                 </h1>
@@ -244,9 +241,7 @@ export default function Onboarding() {
 
         {step === 4 && (
           <div className="text-center">
-            <div className="mb-4 flex justify-center">
-              <CatMascot pose="celebrate" size={130} />
-            </div>
+            <div className="mb-4 text-5xl">🎉</div>
             <h1 className="mb-2 text-2xl font-extrabold text-slate-800">{t('onboarding.finalTitle')}</h1>
             <p className="mb-8 text-slate-500">{t('onboarding.finalBody', { level: startLabel })}</p>
             <Button fullWidth onClick={finish}>

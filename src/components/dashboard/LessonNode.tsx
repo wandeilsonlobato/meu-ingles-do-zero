@@ -2,7 +2,6 @@ import { Award, Check, Lock, Star, Trophy } from 'lucide-react'
 import clsx from 'clsx'
 import { useNavigate } from 'react-router-dom'
 import type { Lesson, LessonStatus } from '../../types'
-import { CatMascot } from '../mascot/CatMascot'
 
 const SIDE_OFFSET = ['ml-0', 'ml-7', 'ml-10', 'ml-7'] as const
 
@@ -17,12 +16,10 @@ export function LessonNode({
   lesson,
   status,
   index,
-  isNext,
 }: {
   lesson: Lesson
   status: LessonStatus
   index: number
-  isNext?: boolean
 }) {
   const navigate = useNavigate()
   const offset = SIDE_OFFSET[index % SIDE_OFFSET.length]
@@ -30,12 +27,6 @@ export function LessonNode({
 
   return (
     <div className={clsx('relative z-10 flex flex-col items-center gap-1', offset)}>
-      {isNext && (
-        <div className="absolute -top-16 flex flex-col items-center">
-          <CatMascot pose="wave" size={56} />
-          <div className="h-2 w-2 rotate-45 bg-white" style={{ marginTop: -4 }} />
-        </div>
-      )}
       <button
         type="button"
         disabled={locked}

@@ -4,7 +4,6 @@ import clsx from 'clsx'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { useI18n } from '../lib/i18n'
-import { CatFaceIcon, CatMascot } from '../components/mascot/CatMascot'
 
 export default function Landing() {
   const { t, locale, setLocale } = useI18n()
@@ -31,7 +30,7 @@ export default function Landing() {
 
         <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
           <div className="flex items-center gap-2 font-display font-extrabold text-brand-700 text-lg">
-            <CatFaceIcon size={28} />
+            <BookOpen size={24} />
             {t('nav.brand')}
           </div>
           <div className="flex items-center gap-4">
@@ -58,29 +57,24 @@ export default function Landing() {
           </div>
         </header>
 
-        <section className="mx-auto flex max-w-6xl flex-col-reverse items-center gap-6 px-6 py-16 text-center lg:flex-row lg:gap-12 lg:py-24 lg:text-left">
-          <div className="flex flex-1 flex-col items-center lg:items-start">
-            <span className="mb-4 rounded-full bg-brand-100 px-4 py-1 text-sm font-bold text-brand-700">
-              {t('landing.tag')}
-            </span>
-            <h1 className="mb-5 max-w-3xl text-4xl font-extrabold leading-tight text-slate-900 sm:text-5xl">
-              {t('landing.heroTitlePart1')} <span className="text-brand-600">{t('landing.heroTitleHighlight')}</span>
-              {t('landing.heroTitlePart2')}
-            </h1>
-            <p className="mb-8 max-w-2xl text-lg text-slate-600">{t('landing.heroSubtitle')}</p>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Link to="/cadastro">
-                <Button size="lg">{t('landing.ctaSignup')}</Button>
-              </Link>
-              <Link to="/entrar">
-                <Button size="lg" variant="secondary">
-                  {t('landing.ctaLogin')}
-                </Button>
-              </Link>
-            </div>
-          </div>
-          <div className="shrink-0">
-            <CatMascot pose="wave" size={220} className="drop-shadow-xl" />
+        <section className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-6 py-16 text-center lg:py-24">
+          <span className="mb-4 rounded-full bg-brand-100 px-4 py-1 text-sm font-bold text-brand-700">
+            {t('landing.tag')}
+          </span>
+          <h1 className="mb-5 max-w-3xl text-4xl font-extrabold leading-tight text-slate-900 sm:text-5xl">
+            {t('landing.heroTitlePart1')} <span className="text-brand-600">{t('landing.heroTitleHighlight')}</span>
+            {t('landing.heroTitlePart2')}
+          </h1>
+          <p className="mb-8 max-w-2xl text-lg text-slate-600">{t('landing.heroSubtitle')}</p>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Link to="/cadastro">
+              <Button size="lg">{t('landing.ctaSignup')}</Button>
+            </Link>
+            <Link to="/entrar">
+              <Button size="lg" variant="secondary">
+                {t('landing.ctaLogin')}
+              </Button>
+            </Link>
           </div>
         </section>
       </div>

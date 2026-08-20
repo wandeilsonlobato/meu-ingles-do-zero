@@ -4,7 +4,6 @@ import { Gem, PartyPopper, RotateCcw, XCircle } from 'lucide-react'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { useT } from '../lib/i18n'
-import { CatMascot } from '../components/mascot/CatMascot'
 import type { Exercise } from '../types'
 
 interface ResultState {
@@ -32,9 +31,7 @@ export default function LessonResult() {
 
   return (
     <div className="mx-auto max-w-xl text-center">
-      <div className="mb-3 flex justify-center">
-        <CatMascot pose={accuracyPct >= 60 ? 'celebrate' : 'wave'} size={130} />
-      </div>
+      <div className="mb-3 text-6xl">{accuracyPct === 100 ? '🏆' : accuracyPct >= 60 ? '🎉' : '💪'}</div>
       <h1 className="mb-1 text-2xl font-extrabold text-slate-800">
         {accuracyPct === 100 ? t('lessonResult.perfect') : t('lessonResult.complete')}
       </h1>
