@@ -1,10 +1,11 @@
 import { type FormEvent, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { BookOpen, MailCheck } from 'lucide-react'
+import { MailCheck } from 'lucide-react'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { isSupabaseConfigured, useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/i18n'
+import { CatFaceIcon } from '../components/mascot/CatMascot'
 
 export default function Signup() {
   const navigate = useNavigate()
@@ -65,7 +66,7 @@ export default function Signup() {
     <div className="flex min-h-screen items-center justify-center bg-brand-50 px-4 py-10">
       <Card className="w-full max-w-md p-8">
         <Link to="/" className="mb-6 flex items-center gap-2 font-extrabold text-brand-700">
-          <BookOpen size={22} />
+          <CatFaceIcon size={26} />
           {t('nav.brand')}
         </Link>
         <h1 className="mb-1 text-2xl font-extrabold text-slate-800">{t('auth.signupTitle')}</h1>

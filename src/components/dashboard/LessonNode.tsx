@@ -2,8 +2,9 @@ import { Award, Check, Lock, Star, Trophy } from 'lucide-react'
 import clsx from 'clsx'
 import { useNavigate } from 'react-router-dom'
 import type { Lesson, LessonStatus } from '../../types'
+import { CatMascot } from '../mascot/CatMascot'
 
-const SIDE_OFFSET = ['ml-0', 'ml-10', 'ml-16', 'ml-10'] as const
+const SIDE_OFFSET = ['ml-0', 'ml-7', 'ml-10', 'ml-7'] as const
 
 function nodeIcon(lesson: Lesson, status: LessonStatus) {
   if (status === 'completed') return <Check size={22} />
@@ -12,24 +13,40 @@ function nodeIcon(lesson: Lesson, status: LessonStatus) {
   return <Star size={20} />
 }
 
-export function LessonNode({ lesson, status, index }: { lesson: Lesson; status: LessonStatus; index: number }) {
+export function LessonNode({
+  lesson,
+  status,
+  index,
+  isNext,
+}: {
+  lesson: Lesson
+  status: LessonStatus
+  index: number
+  isNext?: boolean
+}) {
   const navigate = useNavigate()
   const offset = SIDE_OFFSET[index % SIDE_OFFSET.length]
   const locked = status === 'locked'
 
   return (
-    <div className={clsx('flex flex-col items-center gap-1', offset)}>
+    <div className={clsx('relative z-10 flex flex-col items-center gap-1', offset)}>
+      {isNext && (
+        <div className="absolute -top-16 flex flex-col items-center">
+          <CatMascot pose="wave" size={56} />
+          <div className="h-2 w-2 rotate-45 bg-white" style={{ marginTop: -4 }} />
+        </div>
+      )}
       <button
         type="button"
         disabled={locked}
         onClick={() => navigate(`/app/licao/${lesson.id}`)}
         className={clsx(
-          'flex h-16 w-16 items-center justify-center rounded-full border-4 shadow-md transition-transform disabled:cursor-not-allowed disabled:opacity-60',
+          'flex h-16 w-16 items-center justify-center rounded-full border-4 shadow-lg transition-transform disabled:cursor-not-allowed disabled:opacity-60',
           !locked && 'hover:scale-105 active:scale-95',
-          status === 'completed' && 'border-progress-600 bg-progress-500 text-white',
-          status === 'available' && 'border-brand-600 bg-brand-500 text-white animate-pop',
-          status === 'in_progress' && 'border-glow-500 bg-glow-400 text-white',
-          locked && 'border-slate-300 bg-slate-200 text-slate-400',
+          status === 'completed' && 'border-progress-600 bg-gradient-to-b from-progress-400 to-progress-600 text-white',
+          status === 'available' && 'border-brand-600 bg-gradient-to-b from-brand-400 to-brand-600 text-white animate-pop',
+          status === 'in_progress' && 'border-glow-500 bg-gradient-to-b from-glow-300 to-glow-500 text-white',
+          locked && 'border-slate-300 bg-gradient-to-b from-slate-100 to-slate-200 text-slate-400',
         )}
         aria-label={lesson.title}
       >

@@ -1,8 +1,9 @@
 import { type ReactNode, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
-import { BookOpen, Home, RotateCcw, Settings, ShoppingBag, Trophy, User as UserIcon } from 'lucide-react'
+import { Home, RotateCcw, Settings, ShoppingBag, Trophy, User as UserIcon } from 'lucide-react'
 import clsx from 'clsx'
 import { useAppStore } from '../../store/useAppStore'
+import { CatFaceIcon } from '../mascot/CatMascot'
 import { HeartsDisplay, StreakBadge, XpBadge } from '../ui/StatusBadges'
 import { isStreakAtRisk } from '../../lib/gamification'
 import { todayLocalDate } from '../../lib/auth'
@@ -37,7 +38,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur px-4 py-3">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3">
           <div className="flex items-center gap-2 font-display font-extrabold text-brand-600">
-            <BookOpen size={22} />
+            <CatFaceIcon size={26} />
             <span className="hidden sm:inline">{t('nav.brand')}</span>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">

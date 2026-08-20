@@ -7,6 +7,7 @@ import { ProgressBar } from '../ui/ProgressBar'
 import { HeartsDisplay } from '../ui/StatusBadges'
 import { useAppStore } from '../../store/useAppStore'
 import { useT } from '../../lib/i18n'
+import { CatMascot } from '../mascot/CatMascot'
 import { MultipleChoiceExercise } from './MultipleChoiceExercise'
 import { FillBlankExercise } from './FillBlankExercise'
 import { SentenceOrderExercise } from './SentenceOrderExercise'
@@ -129,6 +130,9 @@ export function ExerciseRunner({ lesson, onComplete, onOutOfHearts }: ExerciseRu
 
       {heartsNowZero && (
         <div className="mt-4 rounded-2xl bg-heart-500/10 p-5 text-center text-heart-700">
+          <div className="mb-2 flex justify-center">
+            <CatMascot pose="sad" size={90} />
+          </div>
           <p className="mb-1 font-extrabold text-lg">{t('lesson.outOfHeartsTitle')}</p>
           <p className="mb-4 text-sm">{t('lesson.outOfHeartsBody')}</p>
           <Button variant="danger" size="sm" onClick={onOutOfHearts}>

@@ -14,6 +14,12 @@ import { dueReviewItems } from '../lib/review'
 import { todayLocalDate } from '../lib/auth'
 import { useT } from '../lib/i18n'
 
+const ZONE_STYLES = [
+  'from-brand-50 border-brand-100',
+  'from-progress-50 border-progress-100',
+  'from-glow-50 border-glow-100',
+]
+
 export default function Dashboard() {
   const navigate = useNavigate()
   const t = useT()
@@ -66,13 +72,17 @@ export default function Dashboard() {
         </Card>
       )}
 
-      {COURSE.map((level) => {
+      {COURSE.map((level, levelIndex) => {
         const unlocked = isLevelUnlocked(level, COURSE, user.progress)
         const pct = levelCompletionPct(level, user.progress)
         const hasContent = level.units.length > 0
+        const zone = ZONE_STYLES[levelIndex % ZONE_STYLES.length]
 
         return (
-          <section key={level.id} className="mb-10">
+          <section
+            key={level.id}
+            className={clsx('mb-10 rounded-3xl border-2 bg-gradient-to-b to-white p-6', zone, !unlocked && 'from-slate-50 border-slate-200')}
+          >
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-wide text-brand-500">{t('dashboard.level')} {level.code}</p>
@@ -97,11 +107,23 @@ export default function Dashboard() {
               level.units.map((unit) => (
                 <div key={unit.id} className="mb-8">
                   <h3 className="mb-4 text-center text-sm font-bold text-slate-500">{unit.title}</h3>
-                  <div className="flex flex-col items-center gap-6">
+                  <div className="relative flex flex-col items-center gap-6 py-2">
+                    <div
+                      className="pointer-events-none absolute top-2 bottom-2 left-1/2 z-0 w-0.5 -translate-x-1/2 border-l-4 border-dashed border-white/70"
+                      aria-hidden
+                    />
                     {unit.lessons.map((lesson) => {
                       const idx = orderedLessons.findIndex((l) => l.id === lesson.id)
                       const status = lessonStatus(lesson, idx, orderedLessons, user.progress)
-                      return <LessonNode key={lesson.id} lesson={lesson} status={status} index={lesson.order} />
+                      return (
+                        <LessonNode
+                          key={lesson.id}
+                          lesson={lesson}
+                          status={status}
+                          index={lesson.order}
+                          isNext={lesson.id === nextLesson?.id}
+                        />
+                      )
                     })}
                   </div>
                 </div>
