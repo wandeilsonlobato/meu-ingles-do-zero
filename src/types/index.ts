@@ -162,6 +162,7 @@ export interface RankingEntry {
   userId: string
   name: string
   avatarEmoji: string
+  avatarPhotoUrl?: string
   xpThisWeek: number
   isCurrentUser?: boolean
 }
@@ -171,6 +172,7 @@ export interface LeaderboardRow {
   id: string
   name: string
   avatarEmoji: string
+  avatarPhotoUrl?: string
   league: LeagueTier
   xpThisWeek: number
   weekStartDate: string

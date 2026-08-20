@@ -71,7 +71,13 @@ export default function Ranking() {
                 className={clsx('flex items-center gap-3 px-5 py-3', entry.isCurrentUser && 'bg-brand-50')}
               >
                 <span className="w-6 text-center font-bold text-slate-400">{i + 1}</span>
-                <span className="text-2xl">{entry.avatarEmoji}</span>
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-50 text-2xl">
+                  {entry.avatarPhotoUrl ? (
+                    <img src={entry.avatarPhotoUrl} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    entry.avatarEmoji
+                  )}
+                </span>
                 <span className={clsx('flex-1 font-semibold', entry.isCurrentUser ? 'text-brand-700' : 'text-slate-700')}>
                   {entry.name} {entry.isCurrentUser && t('ranking.you')}
                 </span>
