@@ -1,5 +1,8 @@
 -- Meu Inglês do Zero — bio/nome editável, foto de perfil, sistema de amigos
 -- Rode este arquivo no SQL Editor do Supabase (depois dos 0001, 0002 e 0003).
+-- Seguro rodar mais de uma vez (idempotente): cada passo checa se já existe
+-- antes de criar, então não tem problema se uma tentativa anterior travou
+-- no meio do caminho.
 
 -- ---------------------------------------------------------------------------
 -- Perfil: bio e foto (nome já existia e já era editável no banco, só faltava UI)
@@ -14,15 +17,19 @@ insert into storage.buckets (id, name, public)
 values ('avatars', 'avatars', true)
 on conflict (id) do nothing;
 
+drop policy if exists "avatar_photos_public_read" on storage.objects;
 create policy "avatar_photos_public_read" on storage.objects
   for select using (bucket_id = 'avatars');
 
+drop policy if exists "avatar_photos_insert_own" on storage.objects;
 create policy "avatar_photos_insert_own" on storage.objects
   for insert with check (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
 
+drop policy if exists "avatar_photos_update_own" on storage.objects;
 create policy "avatar_photos_update_own" on storage.objects
   for update using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
 
+drop policy if exists "avatar_photos_delete_own" on storage.objects;
 create policy "avatar_photos_delete_own" on storage.objects
   for delete using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
 
@@ -30,7 +37,7 @@ create policy "avatar_photos_delete_own" on storage.objects
 -- Perfis públicos: para busca de pessoas e visualização de perfil de outros
 -- alunos. Só dados que fazem sentido mostrar publicamente dentro do app.
 -- ---------------------------------------------------------------------------
-create view public.public_profiles as
+create or replace view public.public_profiles as
   select id, name, avatar_emoji, avatar_photo_url, bio, streak_current, league, created_at
   from public.profiles;
 
@@ -40,13 +47,14 @@ grant select on public.public_profiles to authenticated;
 -- para mostrar", não dado sensível) — necessário para o perfil público exibir
 -- as conquistas de outra pessoa.
 drop policy if exists "achievements_select_own_or_admin" on public.user_achievements;
+drop policy if exists "achievements_select_authenticated" on public.user_achievements;
 create policy "achievements_select_authenticated" on public.user_achievements
   for select using (auth.role() = 'authenticated');
 
 -- ---------------------------------------------------------------------------
 -- Amizades: pedido -> aceito, com lista de amigos
 -- ---------------------------------------------------------------------------
-create table public.friendships (
+create table if not exists public.friendships (
   id uuid primary key default gen_random_uuid(),
   requester_id uuid not null references public.profiles (id) on delete cascade,
   addressee_id uuid not null references public.profiles (id) on delete cascade,
@@ -59,15 +67,19 @@ create table public.friendships (
 
 alter table public.friendships enable row level security;
 
+drop policy if exists "friendships_select_involved" on public.friendships;
 create policy "friendships_select_involved" on public.friendships
   for select using (auth.uid() = requester_id or auth.uid() = addressee_id);
 
+drop policy if exists "friendships_insert_own_request" on public.friendships;
 create policy "friendships_insert_own_request" on public.friendships
   for insert with check (auth.uid() = requester_id);
 
+drop policy if exists "friendships_update_involved" on public.friendships;
 create policy "friendships_update_involved" on public.friendships
   for update using (auth.uid() = requester_id or auth.uid() = addressee_id);
 
+drop policy if exists "friendships_delete_involved" on public.friendships;
 create policy "friendships_delete_involved" on public.friendships
   for delete using (auth.uid() = requester_id or auth.uid() = addressee_id);
 
