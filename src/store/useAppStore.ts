@@ -319,6 +319,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
         wordsLearned,
         perfectSpeakingExercise: accuracyPct >= 100,
         levelJustCompletedCode: justCompletedLevel ? level?.code : undefined,
+        completedLessonId: lessonId,
       },
     )
 

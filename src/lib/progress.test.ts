@@ -138,11 +138,23 @@ describe('checkNewAchievements', () => {
     expect(ids).not.toContain('xp-5000')
   })
 
-  it('unlocks perfect-lesson when any progress entry has 100% accuracy', () => {
+  it('unlocks perfect-lesson when the just-completed lesson has 100% accuracy', () => {
     const user = makeUser({
       progress: { l1: { lessonId: 'l1', status: 'completed', attempts: 1, correct: 4, bestAccuracy: 100 } },
     })
-    expect(checkNewAchievements(user, ACHIEVEMENTS).map((a) => a.id)).toContain('perfect-lesson')
+    const ids = checkNewAchievements(user, ACHIEVEMENTS, { completedLessonId: 'l1' }).map((a) => a.id)
+    expect(ids).toContain('perfect-lesson')
+  })
+
+  it('does not unlock perfect-lesson from an unrelated past perfect lesson', () => {
+    const user = makeUser({
+      progress: {
+        l1: { lessonId: 'l1', status: 'completed', attempts: 1, correct: 4, bestAccuracy: 100 },
+        l2: { lessonId: 'l2', status: 'completed', attempts: 1, correct: 2, bestAccuracy: 50 },
+      },
+    })
+    const ids = checkNewAchievements(user, ACHIEVEMENTS, { completedLessonId: 'l2' }).map((a) => a.id)
+    expect(ids).not.toContain('perfect-lesson')
   })
 
   it('unlocks league achievements based on current league tier', () => {

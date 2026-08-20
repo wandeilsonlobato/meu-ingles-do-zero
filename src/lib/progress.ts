@@ -75,6 +75,7 @@ export interface AchievementContext {
   perfectSpeakingExercise?: boolean
   levelJustCompletedCode?: string
   justPurchasedItem?: boolean
+  completedLessonId?: string
 }
 
 export function checkNewAchievements(
@@ -94,7 +95,8 @@ export function checkNewAchievements(
 
   const progressEntries = Object.values(user.progress)
   const completedCount = progressEntries.filter((p) => p.status === 'completed').length
-  const hasPerfectLesson = progressEntries.some((p) => p.bestAccuracy === 100)
+  const completedLessonEntry = context.completedLessonId ? user.progress[context.completedLessonId] : undefined
+  const hasPerfectLesson = completedLessonEntry?.bestAccuracy === 100
 
   maybeUnlock('first-lesson', completedCount >= 1)
   maybeUnlock('streak-3', user.streakCurrent >= 3)
